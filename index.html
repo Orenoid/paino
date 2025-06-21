@@ -367,6 +367,15 @@
     var answer = document.getElementById("answer");
     //var range = document.getElementById("range");
 
+    var noteToSolfege = {
+        'A': 'La',
+        'B': 'Si',
+        'C': 'Do',
+        'D': 'Re',
+        'E': 'Mi',
+        'F': 'Fa',
+        'G': 'Sol'
+    };
 
     var fun1 = function (event) {
         event.preventDefault();
@@ -438,7 +447,7 @@
             wrong.style.display="none";
             right.style.display="";
             tips.className="";
-            answer.innerHTML=key;
+            answer.innerHTML=key + "/" + noteToSolfege[key];
             setTimeout(function(){
                 tips.className="easeout";
             },10);
@@ -447,7 +456,7 @@
             wrong.style.display="";
             right.style.display="none";
             tips.className="";
-            answer.innerHTML=key;
+            answer.innerHTML=key + "/" + noteToSolfege[key];
             setTimeout(function(){
                 tips.className="easeout";
             },10);
