@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>五线谱记忆小工具</title>
     <meta name="viewport" content="width=device-width,user-scalable=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/themes/light.css" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/shoelace-autoloader.js"></script>
     <style>
 
         body{
@@ -29,6 +31,42 @@
             top:0;
             bottom: 0;
             text-align: center;
+        }
+
+        #toolbalr {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 10px 0;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group span {
+            white-space: nowrap;
+        }
+
+        sl-select {
+            width: 150px;
+        }
+
+        sl-switch {
+            white-space: nowrap;
+        }
+
+        sl-switch::part(base):focus,
+        sl-switch::part(base):focus-visible {
+            box-shadow: none;
+        }
+
+        sl-switch[checked]::part(control) {
+            background-color: black;
+            border-color: black;
         }
 
         #toolbox{
@@ -305,20 +343,17 @@
 <body>
     <div class="container">
         <div id="toolbalr">
-            <div class="select-container">
+            <div class="control-group">
                 <span>谱表：</span>
-                <select id="changeMode">
-                    <option value="all" selected>双音谱表</option>
-                    <option value="up">仅高音谱表</option>
-                    <option value="down">仅低音谱表</option>
-                </select>
+                <sl-select id="changeMode" value="all" size="small">
+                    <sl-option value="all">双音谱表</sl-option>
+                    <sl-option value="up">仅高音谱表</sl-option>
+                    <sl-option value="down">仅低音谱表</sl-option>
+                </sl-select>
             </div>
-            <div class="toggle-container">
-                <span>显示音名/唱名：</span>
-                <label class="switch">
-                    <input type="checkbox" id="changeShow" checked>
-                    <span class="slider round"></span>
-                </label>
+            <div class="control-group">
+                <sl-switch id="changeShow" checked size="small"></sl-switch>
+                <span>显示音名/唱名</span>
             </div>
             <!-- <input type="text" id="range"/> -->
         </div>
@@ -367,6 +402,15 @@
     var answer = document.getElementById("answer");
     //var range = document.getElementById("range");
 
+    var solfegeMap = {
+        'C': 'Do',
+        'D': 'Re',
+        'E': 'Mi',
+        'F': 'Fa',
+        'G': 'Sol',
+        'A': 'La',
+        'B': 'Si'
+    };
 
     var fun1 = function (event) {
         event.preventDefault();
@@ -375,17 +419,17 @@
     changeShow.addEventListener("touchstart", fun1);
     changeShow.addEventListener("mousedown", fun1);
 
-    changeShow.addEventListener("change", function(event) {
-        var display = this.checked ? "" : "none";
+    changeShow.addEventListener("sl-change", function(event) {
+        var display = event.target.checked ? "" : "none";
         for(var i=keyNames.length-1; i>=0; i--){
             keyNames[i].style.display = display;
         }
-        show = this.checked;
+        show = event.target.checked;
     });
 
 
-    changeMode.addEventListener("change", function(event) {
-        mode = this.value;
+    changeMode.addEventListener("sl-change", function(event) {
+        mode = event.target.value;
         if (mode === "up") {
             note.className = "Up2B";
         } else if (mode === "down") {
@@ -438,7 +482,7 @@
             wrong.style.display="none";
             right.style.display="";
             tips.className="";
-            answer.innerHTML=key;
+            answer.innerHTML=key + "/" + solfegeMap[key];
             setTimeout(function(){
                 tips.className="easeout";
             },10);
@@ -447,7 +491,7 @@
             wrong.style.display="";
             right.style.display="none";
             tips.className="";
-            answer.innerHTML=key;
+            answer.innerHTML=key + "/" + solfegeMap[key];
             setTimeout(function(){
                 tips.className="easeout";
             },10);
