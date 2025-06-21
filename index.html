@@ -44,6 +44,78 @@
             background-color: #fff;
             margin: 10px 5px;
             display: inline-block;
+            vertical-align: middle;
+        }
+
+        .toggle-container, .select-container {
+            display: inline-block;
+            margin: 10px 5px;
+            vertical-align: middle;
+        }
+
+        .toggle-container span, .select-container span {
+            vertical-align: middle;
+        }
+
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 40px; /* 控制开关宽度 */
+          height: 22px; /* 控制开关高度 */
+          vertical-align: middle;
+        }
+
+        .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 16px; /* 控制滑块高度 */
+          width: 16px; /* 控制滑块宽度 */
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+
+        input:checked + .slider {
+          background-color: #646464;
+        }
+
+        input:focus + .slider {
+          box-shadow: 0 0 1px #646464;
+        }
+
+        input:checked + .slider:before {
+          -webkit-transform: translateX(18px); /* 控制滑块移动距离 */
+          -ms-transform: translateX(18px);
+          transform: translateX(18px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+          border-radius: 22px; /* 控制开关圆角 */
+        }
+
+        .slider.round:before {
+          border-radius: 50%;
         }
 
         #range {
@@ -161,8 +233,18 @@
         }
         .keyDownName{
             position: absolute;
-            bottom:0;
-            left:40%;
+            bottom: 5px;
+            width: 100%;
+            left: 0;
+            text-align: center;
+        }
+
+        .keySolfegeName{
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            left: 0;
+            text-align: center;
         }
 
         .Up3D{top:   7%  }
@@ -223,9 +305,22 @@
 <body>
     <div class="container">
         <div id="toolbalr">
-            <button id="changeMode">切换为仅低音谱表</button>
-            <button id="changeShow">切换音符显示</button>
-            <input type="text" id="range"/>
+            <div class="select-container">
+                <span>谱表：</span>
+                <select id="changeMode">
+                    <option value="all" selected>双音谱表</option>
+                    <option value="up">仅高音谱表</option>
+                    <option value="down">仅低音谱表</option>
+                </select>
+            </div>
+            <div class="toggle-container">
+                <span>显示音名/唱名：</span>
+                <label class="switch">
+                    <input type="checkbox" id="changeShow" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <!-- <input type="text" id="range"/> -->
         </div>
         <div id="tips" class="hidden">
             <img src="https://raw.githubusercontent.com/QS20199/paino/master/right.gif" id="right"/>
@@ -238,13 +333,13 @@
         </div>
         <div id="paino">
             <div id="normal">
-                <div class="keyDown keyC"><span class="keyDownName">C</span></div>
-                <div class="keyDown keyD"><span class="keyDownName">D</span></div>
-                <div class="keyDown keyE"><span class="keyDownName">E</span></div>
-                <div class="keyDown keyF"><span class="keyDownName">F</span></div>
-                <div class="keyDown keyG"><span class="keyDownName">G</span></div>
-                <div class="keyDown keyA"><span class="keyDownName">A</span></div>
-                <div class="keyDown keyB"><span class="keyDownName">B</span></div>
+                <div class="keyDown keyC"><span class="keySolfegeName">Do</span><span class="keyDownName">C</span></div>
+                <div class="keyDown keyD"><span class="keySolfegeName">Re</span><span class="keyDownName">D</span></div>
+                <div class="keyDown keyE"><span class="keySolfegeName">Mi</span><span class="keyDownName">E</span></div>
+                <div class="keyDown keyF"><span class="keySolfegeName">Fa</span><span class="keyDownName">F</span></div>
+                <div class="keyDown keyG"><span class="keySolfegeName">Sol</span><span class="keyDownName">G</span></div>
+                <div class="keyDown keyA"><span class="keySolfegeName">La</span><span class="keyDownName">A</span></div>
+                <div class="keyDown keyB"><span class="keySolfegeName">Si</span><span class="keyDownName">B</span></div>
             </div>
             <div id="higher">
                 <div class="keyUp keyUpC"><span class="keyUpName"></span></div>
@@ -262,7 +357,7 @@
     var changeShow = document.getElementById("changeShow");
     var changeMode = document.getElementById("changeMode");
     var note = document.getElementById("note");
-    var keyNames = document.querySelectorAll(".keyDownName");
+    var keyNames = document.querySelectorAll(".keyDownName, .keySolfegeName");
     var painoDown = document.getElementById("normal");
     var show = true;
     var mode = "up";
@@ -270,7 +365,7 @@
     var wrong = document.getElementById("wrong");
     var tips = document.getElementById("tips");
     var answer = document.getElementById("answer");
-    var range = document.getElementById("range");
+    //var range = document.getElementById("range");
 
 
     var fun1 = function (event) {
@@ -280,52 +375,23 @@
     changeShow.addEventListener("touchstart", fun1);
     changeShow.addEventListener("mousedown", fun1);
 
-    var fun2 = function (event) {
-        event.preventDefault();
-        this.style.backgroundColor="#FFF";
-        if(show===true){
-            for(var i=keyNames.length-1;i>=0;i--){
-                keyNames[i].style.display="none";
-            }
-            show=false;
-        }else{
-            for(var i=keyNames.length-1;i>=0;i--){
-                keyNames[i].style.display="";
-            }
-            show=true;
+    changeShow.addEventListener("change", function(event) {
+        var display = this.checked ? "" : "none";
+        for(var i=keyNames.length-1; i>=0; i--){
+            keyNames[i].style.display = display;
         }
-    };
-    changeShow.addEventListener("touchend", fun2);
-    changeShow.addEventListener("mouseup", fun2);
+        show = this.checked;
+    });
 
 
-
-    var fun3 =  function (event) {
-        event.preventDefault();
-        this.style.backgroundColor="#EAEAEA";
-    };
-    changeMode.addEventListener("touchstart",fun3);
-    changeMode.addEventListener("mousedown",fun3);
-
-
-    var fun4 = function(event){
-        event.preventDefault();
-        this.style.backgroundColor="#FFF";
-        if(mode==="up"){
-            mode="down";
-            this.innerHTML="切换为双音谱表";
-            note.className="Down2D";
-        }else if(mode==="down"){
-            mode="all";
-            this.innerHTML="切换为仅高音谱表";
-        }else{
-            mode="up";
-            this.innerHTML="切换为仅低音谱表";
-            note.className="Up2B";
+    changeMode.addEventListener("change", function(event) {
+        mode = this.value;
+        if (mode === "up") {
+            note.className = "Up2B";
+        } else if (mode === "down") {
+            note.className = "Down2D";
         }
-    };
-    changeMode.addEventListener("touchend", fun4);
-    changeMode.addEventListener("mouseup", fun4);
+    });
 
 
     var fun5 = function (event) {
@@ -354,8 +420,8 @@
         target.className=target.className.replace("pressDown","pressUp");
         if(target.className.split(/[^^]key/)[1][0]===note.className.slice(-1)){
             //right
-            var shangxian = Number(range.value.split(/\D/)[1] || 19);
-            var xiaxian = Number(range.value.split(/\D/)[0] || 0);
+            var shangxian = 19;
+            var xiaxian = 0;
             var seed = Math.floor (xiaxian+(Math.random()*(shangxian-xiaxian)));
             if(mode=="up"){
                 note.className=notesUp[seed];
