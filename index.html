@@ -192,6 +192,7 @@
             cursor: pointer;
             transition: background-color 0.3s;
             flex: 1;
+            overflow: visible;
         }
 
         .octave-group:hover {
@@ -224,6 +225,7 @@
             bottom:0;
             text-align: center;
             box-sizing: border-box;
+            z-index: 1;
         }
 
         .keyUp{
@@ -276,11 +278,21 @@
 
         .keyboard-container .keyDown {
             height: 100%;
+            background-color: #fff;
+            border: 1px solid #333;
         }
 
         .keyboard-container .keyUp {
             height: 60%;
+            background-color: #000;
+            border: 1px solid #000;
+            z-index: 2;
         }
+
+        .keyboard-container .keyDownName {
+            font-size: 10px;
+        }
+
         .keyDownName{
             position: absolute;
             bottom: 5px;
