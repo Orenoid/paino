@@ -165,33 +165,40 @@
             -webkit-transition:0.2s;
         }
 
-        #full-keyboard-container {
-            position: relative;
+        .keyboard-section {
             width: 100%;
-            padding: 20px 0;
-            background-color: #f5f5f5;
-            border-top: 2px solid #ddd;
+            position: relative;
+            border-top: 1px solid gray;
+            background-color: #fff;
         }
 
-        .keyboard-group {
+        .full-keyboard {
             position: relative;
             width: 100%;
-            height: 80px;
-            margin-bottom: 10px;
+            height: 120px;
+            background-color: #f5f5f5;
+            border-top: 2px solid #ddd;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .octave-group {
+            position: absolute;
+            bottom: 0;
+            height: 100%;
+            display: flex;
             cursor: pointer;
-            border-radius: 8px;
             transition: background-color 0.3s;
         }
 
-        .keyboard-group:hover {
+        .octave-group:hover {
             background-color: #e8e8e8;
         }
 
-        .keyboard-group.selected {
+        .octave-group.selected {
             background-color: #d0d0d0;
         }
 
-        .keyboard-group.hint-flash {
+        .octave-group.hint-flash {
             animation: hintFlash 1s ease-in-out;
         }
 
@@ -200,45 +207,48 @@
             50% { background-color: rgba(255, 255, 0, 0.3); }
         }
 
-        .full-key {
+        .octave-label {
             position: absolute;
-            bottom: 0;
-            width: 3.7%;
-            height: 60px;
-            background-color: white;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: bold;
+            color: #666;
+            background-color: rgba(255,255,255,0.9);
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .piano-key {
+            position: relative;
+            height: 100%;
             border: 1px solid #333;
-            border-radius: 0 0 4px 4px;
             display: flex;
             align-items: flex-end;
             justify-content: center;
             padding-bottom: 5px;
             font-size: 10px;
             font-weight: bold;
+            box-sizing: border-box;
+        }
+
+        .piano-key.white {
+            background-color: white;
             color: #333;
-        }
-
-        .full-key.black {
-            background-color: #000;
-            color: #fff;
-            height: 40px;
-            width: 2.5%;
-            z-index: 2;
-        }
-
-        .full-key.white {
             z-index: 1;
         }
 
-        .group-label {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #666;
-            background-color: rgba(255,255,255,0.8);
-            padding: 2px 8px;
-            border-radius: 4px;
+        .piano-key.black {
+            background-color: #000;
+            color: #fff;
+            z-index: 2;
+            height: 65%;
+            margin-left: -3.5%;
+            margin-right: -3.5%;
+            border: 1px solid #000;
         }
 
         #paino{
@@ -431,25 +441,8 @@
             <img id="note" src="https://raw.githubusercontent.com/QS20199/paino/gh-pages/note.gif" alt="note" class=""/>
         </div>
 
-        <div id="full-keyboard-container">
-            <div id="group-up3" class="keyboard-group" data-group="up3">
-                <span class="group-label">高音组3 (Up3)</span>
-            </div>
-            <div id="group-up2" class="keyboard-group" data-group="up2">
-                <span class="group-label">高音组2 (Up2)</span>
-            </div>
-            <div id="group-up1" class="keyboard-group" data-group="up1">
-                <span class="group-label">高音组1 (Up1)</span>
-            </div>
-            <div id="group-down1" class="keyboard-group" data-group="down1">
-                <span class="group-label">低音组1 (Down1)</span>
-            </div>
-            <div id="group-down2" class="keyboard-group" data-group="down2">
-                <span class="group-label">低音组2 (Down2)</span>
-            </div>
-            <div id="group-down3" class="keyboard-group" data-group="down3">
-                <span class="group-label">低音组3 (Down3)</span>
-            </div>
+        <div class="keyboard-section">
+            <div id="full-keyboard" class="full-keyboard"></div>
         </div>
 
         <div id="paino">
@@ -490,15 +483,30 @@
     var tips = document.getElementById("tips");
     var answer = document.getElementById("answer");
 
-    var selectedGroup = null;
-    var groupMap = {
-        'up3': ['Up3D', 'Up3C', 'Up3B', 'Up3A'],
-        'up2': ['Up2G', 'Up2F', 'Up2E', 'Up2D', 'Up2C', 'Up2B', 'Up2A'],
-        'up1': ['Up1G', 'Up1F', 'Up1E', 'Up1D', 'Up1C', 'Up1B', 'Up1A', 'Up0G'],
-        'down1': ['Down1G', 'Down1F', 'Down1E', 'Down1D', 'Down1C', 'Down1B'],
-        'down2': ['Down2G', 'Down2F', 'Down2E', 'Down2D', 'Down2C', 'Down2B', 'Down2A'],
-        'down3': ['Down3F', 'Down3E', 'Down3D', 'Down3C', 'Down3B', 'Down3A']
-    };
+    var selectedOctave = null;
+    var octaveDefinitions = [
+        { name: '大字二组', id: 'octave-contra', notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'], noteClasses: [] },
+        { name: '大字一组', id: 'octave-great', notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'], noteClasses: [] },
+        { name: '小字组', id: 'octave-small', notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'], noteClasses: [] },
+        { name: '小字一组', id: 'octave-one-lined', notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'], noteClasses: ['Up1G', 'Up1F', 'Up1E', 'Up1D', 'Up1C', 'Up1B', 'Up1A'] },
+        { name: '小字二组', id: 'octave-two-lined', notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'], noteClasses: ['Up2G', 'Up2F', 'Up2E', 'Up2D', 'Up2C', 'Up2B', 'Up2A'] },
+        { name: '小字三组', id: 'octave-three-lined', notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'], noteClasses: ['Up3D', 'Up3C', 'Up3B', 'Up3A'] },
+        { name: '低音组1', id: 'octave-down1', notes: ['F', 'G', 'A', 'B', 'C', 'D'], noteClasses: ['Down1G', 'Down1F', 'Down1E', 'Down1D', 'Down1C', 'Down1B'] },
+        { name: '低音组2', id: 'octave-down2', notes: ['G', 'A', 'B', 'C', 'D', 'E', 'F'], noteClasses: ['Down2G', 'Down2F', 'Down2E', 'Down2D', 'Down2C', 'Down2B', 'Down2A'] },
+        { name: '低音组3', id: 'octave-down3', notes: ['F', 'E', 'D', 'C', 'B', 'A'], noteClasses: ['Down3F', 'Down3E', 'Down3D', 'Down3C', 'Down3B', 'Down3A'] }
+    ];
+
+    var noteToOctaveMap = {};
+
+    function buildNoteToOctaveMap() {
+        octaveDefinitions.forEach(function(octave) {
+            if (octave.noteClasses && octave.noteClasses.length > 0) {
+                octave.noteClasses.forEach(function(noteClass) {
+                    noteToOctaveMap[noteClass] = octave.id;
+                });
+            }
+        });
+    }
 
     function showToast(message) {
         var toast = document.getElementById('toast');
@@ -509,63 +517,66 @@
         }, 2000);
     }
 
-    function initializeGroups() {
-        var groups = document.querySelectorAll('.keyboard-group');
+    function initializeFullKeyboard() {
+        var fullKeyboard = document.getElementById('full-keyboard');
+        var octaveWidth = 100 / octaveDefinitions.length;
 
-        groups.forEach(function(group) {
-            var groupId = group.getAttribute('data-group');
-            var notes = groupMap[groupId];
+        octaveDefinitions.forEach(function(octave, index) {
+            var octaveDiv = document.createElement('div');
+            octaveDiv.className = 'octave-group';
+            octaveDiv.id = octave.id;
+            octaveDiv.style.width = octaveWidth + '%';
+            octaveDiv.style.left = (index * octaveWidth) + '%';
 
-            notes.forEach(function(noteClass) {
-                var keyName = noteClass.slice(-1);
-                var isBlack = ['C', 'D', 'F', 'G', 'A'].includes(keyName) &&
-                             (noteClass.includes('Up') || noteClass.includes('Down'));
+            var label = document.createElement('span');
+            label.className = 'octave-label';
+            label.textContent = octave.name;
+            octaveDiv.appendChild(label);
 
+            octave.notes.forEach(function(noteName, noteIndex) {
                 var key = document.createElement('div');
-                key.className = 'full-key ' + (isBlack && noteClass.length > 4 ? 'black' : 'white');
-                key.setAttribute('data-note', noteClass);
-                key.textContent = keyName;
+                var isBlack = ['C', 'D', 'F', 'G', 'A'].indexOf(noteName) !== -1 &&
+                              noteIndex > 0 &&
+                              ['D', 'E', 'G', 'A', 'B'].indexOf(octave.notes[noteIndex - 1]) !== -1;
 
-                var offset = calculateKeyOffset(groupId, noteClass);
-                key.style.left = offset + '%';
+                key.className = 'piano-key ' + (isBlack ? 'black' : 'white');
 
-                group.appendChild(key);
+                if (octave.noteClasses && octave.noteClasses[noteIndex]) {
+                    key.setAttribute('data-note', octave.noteClasses[noteIndex]);
+                }
+
+                key.textContent = noteName;
+                key.style.flex = '1';
+
+                octaveDiv.appendChild(key);
             });
 
-            group.addEventListener('click', function() {
-                var clickedGroup = this.getAttribute('data-group');
-
-                if (selectedGroup === null) {
-                    selectedGroup = clickedGroup;
-                    groups.forEach(function(g) {
-                        g.classList.remove('selected');
-                    });
-                    this.classList.add('selected');
-                } else if (selectedGroup === clickedGroup) {
-                    this.classList.remove('selected');
-                    selectedGroup = null;
-                } else {
-                    showToast('请先在已选组中选择具体琴键，或点击取消选择');
+            octaveDiv.addEventListener('click', function(e) {
+                if (e.target.classList.contains('octave-label') || e.target.classList.contains('piano-key')) {
+                    handleOctaveClick(octave.id);
                 }
             });
+
+            fullKeyboard.appendChild(octaveDiv);
         });
     }
 
-    function calculateKeyOffset(groupId, noteClass) {
-        var keyName = noteClass.slice(-1);
-        var notes = groupMap[groupId];
-        var index = notes.indexOf(noteClass);
-        var baseOffset = 10;
+    function handleOctaveClick(octaveId) {
+        var allOctaves = document.querySelectorAll('.octave-group');
+        var clickedOctave = document.getElementById(octaveId);
 
-        var whiteKeys = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-        var whiteKeyCount = 0;
-        for (var i = 0; i <= index; i++) {
-            if (whiteKeys.includes(notes[i].slice(-1))) {
-                whiteKeyCount++;
-            }
+        if (selectedOctave === null) {
+            selectedOctave = octaveId;
+            allOctaves.forEach(function(o) {
+                o.classList.remove('selected');
+            });
+            clickedOctave.classList.add('selected');
+        } else if (selectedOctave === octaveId) {
+            clickedOctave.classList.remove('selected');
+            selectedOctave = null;
+        } else {
+            showToast('请先在已选八度组中选择具体琴键，或点击取消选择');
         }
-
-        return baseOffset + (whiteKeyCount - 1) * 5.3;
     }
 
     function randomizeNote() {
@@ -621,7 +632,7 @@
         event.preventDefault();
         var target = event.target;
 
-        if (target.classList.contains('keyboard-group')) {
+        if (target.closest('.octave-group')) {
             return;
         }
 
@@ -648,17 +659,17 @@
             target = target.parentNode;
         }
 
-        if (selectedGroup === null) {
-            showToast('请先在上方完整键盘中选择一个组');
+        if (selectedOctave === null) {
+            showToast('请先在上方完整键盘中选择一个八度组');
             target.className=target.className.replace("pressDown","pressUp");
             return;
         }
 
-        var currentNoteGroup = getNoteGroup(note.className);
-        if (currentNoteGroup !== selectedGroup) {
+        var currentNoteOctave = noteToOctaveMap[note.className];
+        if (currentNoteOctave && currentNoteOctave !== selectedOctave) {
             target.className=target.className.replace("pressDown","pressUp");
-            highlightCorrectGroup(currentNoteGroup);
-            showToast('组选择错误，请选择正确的组');
+            highlightCorrectOctave(currentNoteOctave);
+            showToast('八度组选择错误，请选择正确的组');
             return;
         }
 
@@ -675,11 +686,11 @@
                 tips.className="easeout";
             },10);
 
-            var groups = document.querySelectorAll('.keyboard-group');
-            groups.forEach(function(g) {
-                g.classList.remove('selected');
+            var allOctaves = document.querySelectorAll('.octave-group');
+            allOctaves.forEach(function(o) {
+                o.classList.remove('selected');
             });
-            selectedGroup = null;
+            selectedOctave = null;
         }else{
             wrong.style.display="";
             right.style.display="none";
@@ -691,21 +702,12 @@
         }
     };
 
-    function getNoteGroup(noteClass) {
-        for (var group in groupMap) {
-            if (groupMap[group].includes(noteClass)) {
-                return group;
-            }
-        }
-        return null;
-    }
-
-    function highlightCorrectGroup(groupId) {
-        var correctGroup = document.getElementById('group-' + groupId);
-        if (correctGroup) {
-            correctGroup.classList.add('hint-flash');
+    function highlightCorrectOctave(octaveId) {
+        var correctOctave = document.getElementById(octaveId);
+        if (correctOctave) {
+            correctOctave.classList.add('hint-flash');
             setTimeout(function() {
-                correctGroup.classList.remove('hint-flash');
+                correctOctave.classList.remove('hint-flash');
             }, 1000);
         }
     }
@@ -713,7 +715,8 @@
     painoDown.addEventListener("touchend", fun6);
     painoDown.addEventListener("mouseup", fun6);
 
-    initializeGroups();
+    buildNoteToOctaveMap();
+    initializeFullKeyboard();
     randomizeNote();
 </script>
 </html>
