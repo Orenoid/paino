@@ -168,26 +168,30 @@
         .keyboard-section {
             width: 100%;
             position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .keyboard-row {
+            position: relative;
+            width: 100%;
             border-top: 1px solid gray;
             background-color: #fff;
         }
 
-        .full-keyboard {
+        .keyboard-container {
             position: relative;
             width: 100%;
             height: 120px;
-            background-color: #f5f5f5;
-            border-top: 2px solid #ddd;
-            border-bottom: 1px solid #ccc;
+            display: flex;
         }
 
         .octave-group {
-            position: absolute;
-            bottom: 0;
+            position: relative;
             height: 100%;
-            display: flex;
             cursor: pointer;
             transition: background-color 0.3s;
+            flex: 1;
         }
 
         .octave-group:hover {
@@ -207,115 +211,62 @@
             50% { background-color: rgba(255, 255, 0, 0.3); }
         }
 
-        .octave-label {
-            position: absolute;
-            top: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 11px;
-            font-weight: bold;
-            color: #666;
-            background-color: rgba(255,255,255,0.9);
-            padding: 2px 6px;
-            border-radius: 4px;
-            white-space: nowrap;
-            z-index: 10;
+        .piano-keyboard {
+            position: relative;
+            width: 100%;
+            height: 100%;
         }
 
-        .piano-key {
-            position: relative;
-            height: 100%;
-            border: 1px solid #333;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            padding-bottom: 5px;
-            font-size: 10px;
-            font-weight: bold;
+        .keyDown{
+            background-color: #fff;
+            border: 1px solid black;
+            position: absolute;
+            bottom:0;
+            text-align: center;
             box-sizing: border-box;
         }
 
-        .piano-key.white {
-            background-color: white;
-            color: #333;
-            z-index: 1;
+        .keyUp{
+            background-color: #000;
+            border: 1px solid black;
+            position: absolute;
+            bottom: 45%;
+            box-sizing: border-box;
         }
 
-        .piano-key.black {
-            background-color: #000;
-            color: #fff;
-            z-index: 2;
-            height: 65%;
-            margin-left: -3.5%;
-            margin-right: -3.5%;
-            border: 1px solid #000;
-        }
+        .keyC{ left:0%; width:14.28%; }
+        .keyD{ left:14.28%; width:14.28%; }
+        .keyE{ left:28.56%; width:14.28%; }
+        .keyF{ left:42.84%; width:14.28%; }
+        .keyG{ left:57.12%; width:14.28%; }
+        .keyA{ left:71.4%; width:14.28%; }
+        .keyB{ left:85.68%; width:14.32%; }
+
+        .keyUpC{ left:10.7%; width:7.14%; }
+        .keyUpD{ left:25%; width:7.14%; }
+        .keyUpF{ left:53.5%; width:7.14%; }
+        .keyUpG{ left:67.8%; width:7.14%; }
+        .keyUpA{ left:82.1%; width:7.14%; }
 
         #paino{
             position: relative;
-            border-top: 1px solid gray;
             width:100%;
             padding: 20px 0;
             background-color: #fff;
         }
 
-        .keyDown{
-            width:13.16%;
-            background-color: #fff;
-            border-radius: 5px;
-            border: 1px solid black;
-            position: absolute;
-            bottom:0;
-            height:300px;
-            text-align: center;
-
-        }
-        .keyUp{
-            width:10%;
-            background-color: #000;
-            border-radius: 5px;
-            position: absolute;
-            bottom: 45%;
+        #paino .piano-keyboard {
             height: 300px;
         }
-        .keyC{
-            left:0;
-        }
-        .keyD{
-            left:14%;
-        }
-        .keyE{
-            left:28%;
-        }
-        .keyF{
-            left:42%;
-        }
-        .keyG{
-            left:56%;
-        }
-        .keyA{
-            left:70%;
-        }
-        .keyB{
-            left:84%;
-            right:0;
-            width:auto;
+
+        #paino .keyDown {
+            height: 300px;
+            border-radius: 5px;
         }
 
-        .keyUpC{
-            left:9%;
-        }
-        .keyUpD{
-            left:22.8%;
-        }
-        .keyUpF{
-            left:50.5%;
-        }
-        .keyUpG{
-            left:64.7%;
-        }
-        .keyUpA{
-            left:79%;
+        #paino .keyUp {
+            height: 300px;
+            border-radius: 5px;
         }
         .keyDownName{
             position: absolute;
@@ -442,25 +393,24 @@
         </div>
 
         <div class="keyboard-section">
-            <div id="full-keyboard" class="full-keyboard"></div>
-        </div>
-
-        <div id="paino">
-            <div id="normal">
-                <div class="keyDown keyC"><span class="keySolfegeName">Do</span><span class="keyDownName">C</span></div>
-                <div class="keyDown keyD"><span class="keySolfegeName">Re</span><span class="keyDownName">D</span></div>
-                <div class="keyDown keyE"><span class="keySolfegeName">Mi</span><span class="keyDownName">E</span></div>
-                <div class="keyDown keyF"><span class="keySolfegeName">Fa</span><span class="keyDownName">F</span></div>
-                <div class="keyDown keyG"><span class="keySolfegeName">Sol</span><span class="keyDownName">G</span></div>
-                <div class="keyDown keyA"><span class="keySolfegeName">La</span><span class="keyDownName">A</span></div>
-                <div class="keyDown keyB"><span class="keySolfegeName">Si</span><span class="keyDownName">B</span></div>
+            <div class="keyboard-row">
+                <div id="full-keyboard" class="keyboard-container"></div>
             </div>
-            <div id="higher">
-                <div class="keyUp keyUpC"><span class="keyUpName"></span></div>
-                <div class="keyUp keyUpD"><span class="keyUpName"></span></div>
-                <div class="keyUp keyUpF"><span class="keyUpName"></span></div>
-                <div class="keyUp keyUpG"><span class="keyUpName"></span></div>
-                <div class="keyUp keyUpA"><span class="keyUpName"></span></div>
+            <div id="paino" class="keyboard-row">
+                <div class="piano-keyboard" id="small-keyboard">
+                    <div class="keyDown keyC"><span class="keySolfegeName">Do</span><span class="keyDownName">C</span></div>
+                    <div class="keyDown keyD"><span class="keySolfegeName">Re</span><span class="keyDownName">D</span></div>
+                    <div class="keyDown keyE"><span class="keySolfegeName">Mi</span><span class="keyDownName">E</span></div>
+                    <div class="keyDown keyF"><span class="keySolfegeName">Fa</span><span class="keyDownName">F</span></div>
+                    <div class="keyDown keyG"><span class="keySolfegeName">Sol</span><span class="keyDownName">G</span></div>
+                    <div class="keyDown keyA"><span class="keySolfegeName">La</span><span class="keyDownName">A</span></div>
+                    <div class="keyDown keyB"><span class="keySolfegeName">Si</span><span class="keyDownName">B</span></div>
+                    <div class="keyUp keyUpC"><span class="keyUpName"></span></div>
+                    <div class="keyUp keyUpD"><span class="keyUpName"></span></div>
+                    <div class="keyUp keyUpF"><span class="keyUpName"></span></div>
+                    <div class="keyUp keyUpG"><span class="keyUpName"></span></div>
+                    <div class="keyUp keyUpA"><span class="keyUpName"></span></div>
+                </div>
             </div>
         </div>
     </div>
@@ -475,7 +425,6 @@
     var changeMode = document.getElementById("changeMode");
     var note = document.getElementById("note");
     var keyNames = document.querySelectorAll(".keyDownName, .keySolfegeName");
-    var painoDown = document.getElementById("normal");
     var show = true;
     var mode = changeMode.value;
     var right = document.getElementById("right");
@@ -485,15 +434,15 @@
 
     var selectedOctave = null;
     var octaveDefinitions = [
-        { name: '大字二组', id: 'octave-contra', notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'], noteClasses: [] },
-        { name: '大字一组', id: 'octave-great', notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'], noteClasses: [] },
-        { name: '小字组', id: 'octave-small', notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'], noteClasses: [] },
-        { name: '小字一组', id: 'octave-one-lined', notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'], noteClasses: ['Up1G', 'Up1F', 'Up1E', 'Up1D', 'Up1C', 'Up1B', 'Up1A'] },
-        { name: '小字二组', id: 'octave-two-lined', notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'], noteClasses: ['Up2G', 'Up2F', 'Up2E', 'Up2D', 'Up2C', 'Up2B', 'Up2A'] },
-        { name: '小字三组', id: 'octave-three-lined', notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'], noteClasses: ['Up3D', 'Up3C', 'Up3B', 'Up3A'] },
-        { name: '低音组1', id: 'octave-down1', notes: ['F', 'G', 'A', 'B', 'C', 'D'], noteClasses: ['Down1G', 'Down1F', 'Down1E', 'Down1D', 'Down1C', 'Down1B'] },
-        { name: '低音组2', id: 'octave-down2', notes: ['G', 'A', 'B', 'C', 'D', 'E', 'F'], noteClasses: ['Down2G', 'Down2F', 'Down2E', 'Down2D', 'Down2C', 'Down2B', 'Down2A'] },
-        { name: '低音组3', id: 'octave-down3', notes: ['F', 'E', 'D', 'C', 'B', 'A'], noteClasses: ['Down3F', 'Down3E', 'Down3D', 'Down3C', 'Down3B', 'Down3A'] }
+        { id: 'octave-contra', noteClasses: [] },
+        { id: 'octave-great', noteClasses: [] },
+        { id: 'octave-small', noteClasses: [] },
+        { id: 'octave-one-lined', noteClasses: ['Up1G', 'Up1F', 'Up1E', 'Up1D', 'Up1C', 'Up1B', 'Up1A', 'Up0G'] },
+        { id: 'octave-two-lined', noteClasses: ['Up2G', 'Up2F', 'Up2E', 'Up2D', 'Up2C', 'Up2B', 'Up2A'] },
+        { id: 'octave-three-lined', noteClasses: ['Up3D', 'Up3C', 'Up3B', 'Up3A'] },
+        { id: 'octave-down1', noteClasses: ['Down1G', 'Down1F', 'Down1E', 'Down1D', 'Down1C', 'Down1B'] },
+        { id: 'octave-down2', noteClasses: ['Down2G', 'Down2F', 'Down2E', 'Down2D', 'Down2C', 'Down2B', 'Down2A'] },
+        { id: 'octave-down3', noteClasses: ['Down3F', 'Down3E', 'Down3D', 'Down3C', 'Down3B', 'Down3A'] }
     ];
 
     var noteToOctaveMap = {};
@@ -517,42 +466,61 @@
         }, 2000);
     }
 
+    function createKeyboardKeys(containerId, noteClasses) {
+        var container = document.getElementById(containerId);
+
+        var whiteKeys = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+        var blackKeys = ['C', 'D', 'F', 'G', 'A'];
+
+        whiteKeys.forEach(function(keyName) {
+            var key = document.createElement('div');
+            key.className = 'keyDown key' + keyName;
+            key.textContent = keyName;
+
+            if (noteClasses && noteClasses.length > 0) {
+                var index = whiteKeys.indexOf(keyName);
+                if (index < noteClasses.length) {
+                    key.setAttribute('data-note', noteClasses[index]);
+                }
+            }
+
+            container.appendChild(key);
+        });
+
+        blackKeys.forEach(function(keyName) {
+            var key = document.createElement('div');
+            key.className = 'keyUp keyUp' + keyName;
+            key.textContent = '';
+
+            if (noteClasses && noteClasses.length > 0) {
+                var index = whiteKeys.indexOf(keyName);
+                if (index < noteClasses.length) {
+                    key.setAttribute('data-note', noteClasses[index]);
+                }
+            }
+
+            container.appendChild(key);
+        });
+    }
+
     function initializeFullKeyboard() {
         var fullKeyboard = document.getElementById('full-keyboard');
-        var octaveWidth = 100 / octaveDefinitions.length;
 
         octaveDefinitions.forEach(function(octave, index) {
             var octaveDiv = document.createElement('div');
             octaveDiv.className = 'octave-group';
             octaveDiv.id = octave.id;
-            octaveDiv.style.width = octaveWidth + '%';
-            octaveDiv.style.left = (index * octaveWidth) + '%';
 
-            var label = document.createElement('span');
-            label.className = 'octave-label';
-            label.textContent = octave.name;
-            octaveDiv.appendChild(label);
+            var keyboardId = 'keyboard-' + octave.id;
+            var keyboard = document.createElement('div');
+            keyboard.className = 'piano-keyboard';
+            keyboard.id = keyboardId;
+            octaveDiv.appendChild(keyboard);
 
-            octave.notes.forEach(function(noteName, noteIndex) {
-                var key = document.createElement('div');
-                var isBlack = ['C', 'D', 'F', 'G', 'A'].indexOf(noteName) !== -1 &&
-                              noteIndex > 0 &&
-                              ['D', 'E', 'G', 'A', 'B'].indexOf(octave.notes[noteIndex - 1]) !== -1;
-
-                key.className = 'piano-key ' + (isBlack ? 'black' : 'white');
-
-                if (octave.noteClasses && octave.noteClasses[noteIndex]) {
-                    key.setAttribute('data-note', octave.noteClasses[noteIndex]);
-                }
-
-                key.textContent = noteName;
-                key.style.flex = '1';
-
-                octaveDiv.appendChild(key);
-            });
+            createKeyboardKeys(keyboardId, octave.noteClasses);
 
             octaveDiv.addEventListener('click', function(e) {
-                if (e.target.classList.contains('octave-label') || e.target.classList.contains('piano-key')) {
+                if (e.target.closest('.piano-keyboard')) {
                     handleOctaveClick(octave.id);
                 }
             });
@@ -646,8 +614,10 @@
             target.className+=" pressDown";
         }
     };
-    painoDown.addEventListener("touchstart", fun5);
-    painoDown.addEventListener("mousedown", fun5);
+
+    var smallKeyboard = document.getElementById('small-keyboard');
+    smallKeyboard.addEventListener("touchstart", fun5);
+    smallKeyboard.addEventListener("mousedown", fun5);
 
 
     var fun6 = function (event) {
@@ -712,8 +682,8 @@
         }
     }
 
-    painoDown.addEventListener("touchend", fun6);
-    painoDown.addEventListener("mouseup", fun6);
+    smallKeyboard.addEventListener("touchend", fun6);
+    smallKeyboard.addEventListener("mouseup", fun6);
 
     buildNoteToOctaveMap();
     initializeFullKeyboard();
