@@ -230,7 +230,8 @@
             background-color: #000;
             border: 1px solid black;
             position: absolute;
-            bottom: 45%;
+            top: 0;
+            height: 60%;
             box-sizing: border-box;
         }
 
@@ -242,11 +243,11 @@
         .keyA{ left:71.4%; width:14.28%; }
         .keyB{ left:85.68%; width:14.32%; }
 
-        .keyUpC{ left:10.7%; width:7.14%; }
-        .keyUpD{ left:25%; width:7.14%; }
-        .keyUpF{ left:53.5%; width:7.14%; }
-        .keyUpG{ left:67.8%; width:7.14%; }
-        .keyUpA{ left:82.1%; width:7.14%; }
+        .keyUpC{ left:10.7%; width:7.14%; z-index: 2; }
+        .keyUpD{ left:25%; width:7.14%; z-index: 2; }
+        .keyUpF{ left:53.5%; width:7.14%; z-index: 2; }
+        .keyUpG{ left:67.8%; width:7.14%; z-index: 2; }
+        .keyUpA{ left:82.1%; width:7.14%; z-index: 2; }
 
         #paino{
             position: relative;
@@ -260,13 +261,25 @@
         }
 
         #paino .keyDown {
-            height: 300px;
+            height: 100%;
             border-radius: 5px;
         }
 
         #paino .keyUp {
-            height: 300px;
+            height: 60%;
             border-radius: 5px;
+        }
+
+        .keyboard-container .piano-keyboard {
+            height: 100%;
+        }
+
+        .keyboard-container .keyDown {
+            height: 100%;
+        }
+
+        .keyboard-container .keyUp {
+            height: 60%;
         }
         .keyDownName{
             position: absolute;
@@ -475,7 +488,6 @@
         whiteKeys.forEach(function(keyName) {
             var key = document.createElement('div');
             key.className = 'keyDown key' + keyName;
-            key.textContent = keyName;
 
             if (noteClasses && noteClasses.length > 0) {
                 var index = whiteKeys.indexOf(keyName);
@@ -484,13 +496,17 @@
                 }
             }
 
+            var noteSpan = document.createElement('span');
+            noteSpan.className = 'keyDownName';
+            noteSpan.textContent = keyName;
+            key.appendChild(noteSpan);
+
             container.appendChild(key);
         });
 
         blackKeys.forEach(function(keyName) {
             var key = document.createElement('div');
             key.className = 'keyUp keyUp' + keyName;
-            key.textContent = '';
 
             if (noteClasses && noteClasses.length > 0) {
                 var index = whiteKeys.indexOf(keyName);
