@@ -23,12 +23,13 @@
 
         .container{
             max-width: 400px;
-            max-height: 600px;
             width: 100%;
             position: absolute;
             top:0;
             bottom: 0;
             text-align: center;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         #toolbox{
@@ -60,8 +61,8 @@
         .switch {
           position: relative;
           display: inline-block;
-          width: 40px; /* 控制开关宽度 */
-          height: 22px; /* 控制开关高度 */
+          width: 40px;
+          height: 22px;
           vertical-align: middle;
         }
 
@@ -86,8 +87,8 @@
         .slider:before {
           position: absolute;
           content: "";
-          height: 16px; /* 控制滑块高度 */
-          width: 16px; /* 控制滑块宽度 */
+          height: 16px;
+          width: 16px;
           left: 3px;
           bottom: 3px;
           background-color: white;
@@ -104,14 +105,13 @@
         }
 
         input:checked + .slider:before {
-          -webkit-transform: translateX(18px); /* 控制滑块移动距离 */
+          -webkit-transform: translateX(18px);
           -ms-transform: translateX(18px);
           transform: translateX(18px);
         }
 
-        /* Rounded sliders */
         .slider.round {
-          border-radius: 22px; /* 控制开关圆角 */
+          border-radius: 22px;
         }
 
         .slider.round:before {
@@ -127,7 +127,6 @@
             position: relative;
             width:100%;
             height:30px;
-            /*margin: 20%;*/
         }
         #right,#wrong{
             position: absolute;
@@ -165,14 +164,91 @@
             left:58%;
             -webkit-transition:0.2s;
         }
-        #paino{
-            position: absolute;
-            border-top: 1px solid gray;
-            top: 70%;
-            bottom: 0;
-            width:100%;
-            overflow: hidden;
+
+        #full-keyboard-container {
+            position: relative;
+            width: 100%;
+            padding: 20px 0;
+            background-color: #f5f5f5;
+            border-top: 2px solid #ddd;
         }
+
+        .keyboard-group {
+            position: relative;
+            width: 100%;
+            height: 80px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .keyboard-group:hover {
+            background-color: #e8e8e8;
+        }
+
+        .keyboard-group.selected {
+            background-color: #d0d0d0;
+        }
+
+        .keyboard-group.hint-flash {
+            animation: hintFlash 1s ease-in-out;
+        }
+
+        @keyframes hintFlash {
+            0%, 100% { background-color: rgba(255, 255, 0, 0); }
+            50% { background-color: rgba(255, 255, 0, 0.3); }
+        }
+
+        .full-key {
+            position: absolute;
+            bottom: 0;
+            width: 3.7%;
+            height: 60px;
+            background-color: white;
+            border: 1px solid #333;
+            border-radius: 0 0 4px 4px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 5px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .full-key.black {
+            background-color: #000;
+            color: #fff;
+            height: 40px;
+            width: 2.5%;
+            z-index: 2;
+        }
+
+        .full-key.white {
+            z-index: 1;
+        }
+
+        .group-label {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
+            background-color: rgba(255,255,255,0.8);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        #paino{
+            position: relative;
+            border-top: 1px solid gray;
+            width:100%;
+            padding: 20px 0;
+            background-color: #fff;
+        }
+
         .keyDown{
             width:13.16%;
             background-color: #fff;
@@ -300,6 +376,30 @@
             100% {background-color: #ffffff;}
         }
 
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeInOut 2s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            20%, 80% { opacity: 1; }
+        }
+
     </style>
 </head>
 <body>
@@ -320,7 +420,6 @@
                     <span class="slider round"></span>
                 </label>
             </div>
-            <!-- <input type="text" id="range"/> -->
         </div>
         <div id="tips" class="hidden">
             <img src="https://raw.githubusercontent.com/QS20199/paino/master/right.gif" id="right"/>
@@ -331,6 +430,28 @@
             <img id="stave" src="https://raw.githubusercontent.com/QS20199/paino/gh-pages/stave.gif" alt="stave"/>
             <img id="note" src="https://raw.githubusercontent.com/QS20199/paino/gh-pages/note.gif" alt="note" class=""/>
         </div>
+
+        <div id="full-keyboard-container">
+            <div id="group-up3" class="keyboard-group" data-group="up3">
+                <span class="group-label">高音组3 (Up3)</span>
+            </div>
+            <div id="group-up2" class="keyboard-group" data-group="up2">
+                <span class="group-label">高音组2 (Up2)</span>
+            </div>
+            <div id="group-up1" class="keyboard-group" data-group="up1">
+                <span class="group-label">高音组1 (Up1)</span>
+            </div>
+            <div id="group-down1" class="keyboard-group" data-group="down1">
+                <span class="group-label">低音组1 (Down1)</span>
+            </div>
+            <div id="group-down2" class="keyboard-group" data-group="down2">
+                <span class="group-label">低音组2 (Down2)</span>
+            </div>
+            <div id="group-down3" class="keyboard-group" data-group="down3">
+                <span class="group-label">低音组3 (Down3)</span>
+            </div>
+        </div>
+
         <div id="paino">
             <div id="normal">
                 <div class="keyDown keyC"><span class="keySolfegeName">Do</span><span class="keyDownName">C</span></div>
@@ -350,6 +471,9 @@
             </div>
         </div>
     </div>
+
+    <div id="toast" class="toast"></div>
+
 </body>
 <script>
     var notesUp = ["Up3D","Up3C","Up3B","Up3A","Up2G","Up2F","Up2E","Up2D","Up2C","Up2B","Up2A","Up1G","Up1F","Up1E","Up1D","Up1C","Up1B","Up1A","Up0G"];
@@ -365,7 +489,84 @@
     var wrong = document.getElementById("wrong");
     var tips = document.getElementById("tips");
     var answer = document.getElementById("answer");
-    //var range = document.getElementById("range");
+
+    var selectedGroup = null;
+    var groupMap = {
+        'up3': ['Up3D', 'Up3C', 'Up3B', 'Up3A'],
+        'up2': ['Up2G', 'Up2F', 'Up2E', 'Up2D', 'Up2C', 'Up2B', 'Up2A'],
+        'up1': ['Up1G', 'Up1F', 'Up1E', 'Up1D', 'Up1C', 'Up1B', 'Up1A', 'Up0G'],
+        'down1': ['Down1G', 'Down1F', 'Down1E', 'Down1D', 'Down1C', 'Down1B'],
+        'down2': ['Down2G', 'Down2F', 'Down2E', 'Down2D', 'Down2C', 'Down2B', 'Down2A'],
+        'down3': ['Down3F', 'Down3E', 'Down3D', 'Down3C', 'Down3B', 'Down3A']
+    };
+
+    function showToast(message) {
+        var toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(function() {
+            toast.classList.remove('show');
+        }, 2000);
+    }
+
+    function initializeGroups() {
+        var groups = document.querySelectorAll('.keyboard-group');
+
+        groups.forEach(function(group) {
+            var groupId = group.getAttribute('data-group');
+            var notes = groupMap[groupId];
+
+            notes.forEach(function(noteClass) {
+                var keyName = noteClass.slice(-1);
+                var isBlack = ['C', 'D', 'F', 'G', 'A'].includes(keyName) &&
+                             (noteClass.includes('Up') || noteClass.includes('Down'));
+
+                var key = document.createElement('div');
+                key.className = 'full-key ' + (isBlack && noteClass.length > 4 ? 'black' : 'white');
+                key.setAttribute('data-note', noteClass);
+                key.textContent = keyName;
+
+                var offset = calculateKeyOffset(groupId, noteClass);
+                key.style.left = offset + '%';
+
+                group.appendChild(key);
+            });
+
+            group.addEventListener('click', function() {
+                var clickedGroup = this.getAttribute('data-group');
+
+                if (selectedGroup === null) {
+                    selectedGroup = clickedGroup;
+                    groups.forEach(function(g) {
+                        g.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                } else if (selectedGroup === clickedGroup) {
+                    this.classList.remove('selected');
+                    selectedGroup = null;
+                } else {
+                    showToast('请先在已选组中选择具体琴键，或点击取消选择');
+                }
+            });
+        });
+    }
+
+    function calculateKeyOffset(groupId, noteClass) {
+        var keyName = noteClass.slice(-1);
+        var notes = groupMap[groupId];
+        var index = notes.indexOf(noteClass);
+        var baseOffset = 10;
+
+        var whiteKeys = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+        var whiteKeyCount = 0;
+        for (var i = 0; i <= index; i++) {
+            if (whiteKeys.includes(notes[i].slice(-1))) {
+                whiteKeyCount++;
+            }
+        }
+
+        return baseOffset + (whiteKeyCount - 1) * 5.3;
+    }
 
     function randomizeNote() {
         var shangxian = 19;
@@ -419,9 +620,15 @@
     var fun5 = function (event) {
         event.preventDefault();
         var target = event.target;
+
+        if (target.classList.contains('keyboard-group')) {
+            return;
+        }
+
         if(target.nodeName==="SPAN"){
             target = target.parentNode;
         }
+
         if(target.className.search("pressUp")!==-1){
             target.className=target.className.replace("pressUp","pressDown");
         }else{
@@ -436,12 +643,28 @@
         event.preventDefault();
         var target = event.target;
         var key = note.className.slice(-1);
+
         if(target.nodeName==="SPAN"){
             target = target.parentNode;
         }
+
+        if (selectedGroup === null) {
+            showToast('请先在上方完整键盘中选择一个组');
+            target.className=target.className.replace("pressDown","pressUp");
+            return;
+        }
+
+        var currentNoteGroup = getNoteGroup(note.className);
+        if (currentNoteGroup !== selectedGroup) {
+            target.className=target.className.replace("pressDown","pressUp");
+            highlightCorrectGroup(currentNoteGroup);
+            showToast('组选择错误，请选择正确的组');
+            return;
+        }
+
         target.className=target.className.replace("pressDown","pressUp");
+
         if(target.className.split(/[^^]key/)[1][0]===note.className.slice(-1)){
-            //right
             randomizeNote();
 
             wrong.style.display="none";
@@ -451,8 +674,13 @@
             setTimeout(function(){
                 tips.className="easeout";
             },10);
+
+            var groups = document.querySelectorAll('.keyboard-group');
+            groups.forEach(function(g) {
+                g.classList.remove('selected');
+            });
+            selectedGroup = null;
         }else{
-            //wrong
             wrong.style.display="";
             right.style.display="none";
             tips.className="";
@@ -462,9 +690,30 @@
             },10);
         }
     };
+
+    function getNoteGroup(noteClass) {
+        for (var group in groupMap) {
+            if (groupMap[group].includes(noteClass)) {
+                return group;
+            }
+        }
+        return null;
+    }
+
+    function highlightCorrectGroup(groupId) {
+        var correctGroup = document.getElementById('group-' + groupId);
+        if (correctGroup) {
+            correctGroup.classList.add('hint-flash');
+            setTimeout(function() {
+                correctGroup.classList.remove('hint-flash');
+            }, 1000);
+        }
+    }
+
     painoDown.addEventListener("touchend", fun6);
     painoDown.addEventListener("mouseup", fun6);
 
+    initializeGroups();
     randomizeNote();
 </script>
 </html>
