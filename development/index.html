@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh">
+    <meta charset="UTF-8">
+    <title>[DEV-VERSION] 五线谱记忆小工具</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+    <style>
+
+        body{
+            margin: 0;
+            font-family: "Helvetica","Microsoft YaHei";
+            font-size: 15px;
+            -webkit-user-select:none;
+            cursor: default;
+        }
+
+        @media all and (min-width:400px) {
+            .container{
+                left:50%;
+                margin-left:-200px;
+            }
+        }
+
+        .container{
+            max-width: 400px;
+            max-height: 600px;
+            width: 100%;
+            position: absolute;
+            top:0;
+            bottom: 0;
+            text-align: center;
+        }
+
+        #toolbox{
+            text-align: center;
+            margin: 0 auto;
+        }
+        button{
+            width: 120px;
+            line-height: 35px;
+            border:1px solid #bfbfbf;
+            border-radius: 5px;
+            color: #646464;
+            background-color: #fff;
+            margin: 10px 5px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .toggle-container, .select-container {
+            display: inline-block;
+            margin: 10px 5px;
+            vertical-align: middle;
+        }
+
+        .toggle-container span, .select-container span {
+            vertical-align: middle;
+        }
+
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 40px; /* 控制开关宽度 */
+          height: 22px; /* 控制开关高度 */
+          vertical-align: middle;
+        }
+
+        .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 16px; /* 控制滑块高度 */
+          width: 16px; /* 控制滑块宽度 */
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+
+        input:checked + .slider {
+          background-color: #000000;
+        }
+
+        input:focus + .slider {
+          box-shadow: 0 0 1px #646464;
+        }
+
+        input:checked + .slider:before {
+          -webkit-transform: translateX(18px); /* 控制滑块移动距离 */
+          -ms-transform: translateX(18px);
+          transform: translateX(18px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+          border-radius: 22px; /* 控制开关圆角 */
+        }
+
+        .slider.round:before {
+          border-radius: 50%;
+        }
+
+        #range {
+            width:30px;
+            border:1px solid #bfbfbf;
+        }
+
+        #tips{
+            position: relative;
+            width:100%;
+            height:30px;
+            /*margin: 20%;*/
+        }
+        #right,#wrong{
+            position: absolute;
+            width:15px;
+            top:10px;
+            left:40%;
+        }
+        .hidden{
+            opacity: 0;
+        }
+        .easeout{
+            -webkit-animation:easeout 1.5s;
+            -webkit-animation-fill-mode:forwards;
+        }
+        @-webkit-keyframes easeout{
+            0% {opacity: 1;}
+            100% {opacity: 0;}
+        }
+        #answer{
+            position: absolute;
+            left:60%;
+            top:9px;
+        }
+        #showArea{
+            position: relative;
+        }
+        #stave{
+            max-width: 60%;
+            width: auto;
+            margin: 0 20% 0;
+        }
+        #note{
+            width:4.4%;
+            position: absolute;
+            left:58%;
+            -webkit-transition:0.2s;
+        }
+        #paino{
+            position: absolute;
+            border-top: 1px solid gray;
+            top: 70%;
+            bottom: 0;
+            width:100%;
+            overflow: hidden;
+        }
+        .keyDown{
+            width:13.16%;
+            background-color: #fff;
+            border-radius: 5px;
+            border: 1px solid black;
+            position: absolute;
+            bottom:0;
+            height:300px;
+            text-align: center;
+
+        }
+        .keyUp{
+            width:10%;
+            background-color: #000;
+            border-radius: 5px;
+            position: absolute;
+            bottom: 45%;
+            height: 300px;
+        }
+        .keyC{
+            left:0;
+        }
+        .keyD{
+            left:14%;
+        }
+        .keyE{
+            left:28%;
+        }
+        .keyF{
+            left:42%;
+        }
+        .keyG{
+            left:56%;
+        }
+        .keyA{
+            left:70%;
+        }
+        .keyB{
+            left:84%;
+            right:0;
+            width:auto;
+        }
+
+        .keyUpC{
+            left:9%;
+        }
+        .keyUpD{
+            left:22.8%;
+        }
+        .keyUpF{
+            left:50.5%;
+        }
+        .keyUpG{
+            left:64.7%;
+        }
+        .keyUpA{
+            left:79%;
+        }
+        .keyDownName{
+            position: absolute;
+            bottom: 5px;
+            width: 100%;
+            left: 0;
+            text-align: center;
+        }
+
+        .keySolfegeName{
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            left: 0;
+            text-align: center;
+        }
+
+        .Up3D{top:   7%  }
+        .Up3C{top:   9.083%  }
+        .Up3B{top:   11.166%  }
+        .Up3A{top:   13.249%  }
+        .Up2G{top:   15.333%  }
+        .Up2F{top:   17.417%  }
+        .Up2E{top:   19.5%  }
+        .Up2D{top:   21.583%  }
+        .Up2C{top:   23.667%  }
+        .Up2B{top:   25.75%  }
+        .Up2A{top:   27.833%  }
+        .Up1G{top:   29.917%  }
+        .Up1F{top:   32%  }
+        .Up1E{top:   34.083%  }
+        .Up1D{top:   36.167%  }
+        .Up1C{top:   38.25%  }
+        .Up1B{top:   40.333%  }
+        .Up1A{top:   42.417%  }
+        .Up0G{top:   44.5%  }
+
+        .Down3F{top:   48.7%  }
+        .Down3E{top:   50.793%  }
+        .Down3D{top:   52.887%  }
+        .Down3C{top:   54.98%  }
+        .Down3B{top:   57.073%  }
+        .Down3A{top:   59.166%  }
+        .Down2G{top:   61.259%  }
+        .Down2F{top:   63.353%  }
+        .Down2E{top:   65.447%  }
+        .Down2D{top:   67.54%  }
+        .Down2C{top:   69.633%  }
+        .Down2B{top:   71.727%  }
+        .Down2A{top:   73.82%  }
+        .Down1G{top:   75.913%  }
+        .Down1F{top:   78.007%  }
+        .Down1E{top:   80.1%  }
+        .Down1D{top:   82.193%  }
+        .Down1C{top:   84.286%  }
+        .Down1B{top:   86.38%  }
+
+        .pressDown{
+            background-color: #bababa;
+        }
+        .pressUp{
+            -webkit-animation: color 0.3s;
+            -webkit-animation-fill-mode:forwards;
+        }
+
+        @-webkit-keyframes color{
+            0% {background-color: #bababa;}
+            100% {background-color: #ffffff;}
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="toolbalr">
+            <div class="select-container">
+                <span>谱表：</span>
+                <select id="changeMode">
+                    <option value="all" selected>双音谱表</option>
+                    <option value="up">仅高音谱表</option>
+                    <option value="down">仅低音谱表</option>
+                </select>
+            </div>
+            <div class="toggle-container">
+                <span>显示音名/唱名：</span>
+                <label class="switch">
+                    <input type="checkbox" id="changeShow" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <!-- <input type="text" id="range"/> -->
+        </div>
+        <div id="tips" class="hidden">
+            <img src="https://raw.githubusercontent.com/QS20199/paino/master/right.gif" id="right"/>
+            <img src="https://raw.githubusercontent.com/QS20199/paino/master/wrong.gif" id="wrong"/>
+            <span id="answer">C</span>
+        </div>
+        <div id="showArea">
+            <img id="stave" src="https://raw.githubusercontent.com/QS20199/paino/gh-pages/stave.gif" alt="stave"/>
+            <img id="note" src="https://raw.githubusercontent.com/QS20199/paino/gh-pages/note.gif" alt="note" class=""/>
+        </div>
+        <div id="paino">
+            <div id="normal">
+                <div class="keyDown keyC"><span class="keySolfegeName">Do</span><span class="keyDownName">C</span></div>
+                <div class="keyDown keyD"><span class="keySolfegeName">Re</span><span class="keyDownName">D</span></div>
+                <div class="keyDown keyE"><span class="keySolfegeName">Mi</span><span class="keyDownName">E</span></div>
+                <div class="keyDown keyF"><span class="keySolfegeName">Fa</span><span class="keyDownName">F</span></div>
+                <div class="keyDown keyG"><span class="keySolfegeName">Sol</span><span class="keyDownName">G</span></div>
+                <div class="keyDown keyA"><span class="keySolfegeName">La</span><span class="keyDownName">A</span></div>
+                <div class="keyDown keyB"><span class="keySolfegeName">Si</span><span class="keyDownName">B</span></div>
+            </div>
+            <div id="higher">
+                <div class="keyUp keyUpC"><span class="keyUpName"></span></div>
+                <div class="keyUp keyUpD"><span class="keyUpName"></span></div>
+                <div class="keyUp keyUpF"><span class="keyUpName"></span></div>
+                <div class="keyUp keyUpG"><span class="keyUpName"></span></div>
+                <div class="keyUp keyUpA"><span class="keyUpName"></span></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    var notesUp = ["Up3D","Up3C","Up3B","Up3A","Up2G","Up2F","Up2E","Up2D","Up2C","Up2B","Up2A","Up1G","Up1F","Up1E","Up1D","Up1C","Up1B","Up1A","Up0G"];
+    var notesDown = ["Down3F","Down3E","Down3D","Down3C","Down3B","Down3A","Down2G","Down2F","Down2E","Down2D","Down2C","Down2B","Down2A","Down1G","Down1F","Down1E","Down1D","Down1C","Down1B"];
+    var changeShow = document.getElementById("changeShow");
+    var changeMode = document.getElementById("changeMode");
+    var note = document.getElementById("note");
+    var keyNames = document.querySelectorAll(".keyDownName, .keySolfegeName");
+    var painoDown = document.getElementById("normal");
+    var show = true;
+    var mode = changeMode.value;
+    var right = document.getElementById("right");
+    var wrong = document.getElementById("wrong");
+    var tips = document.getElementById("tips");
+    var answer = document.getElementById("answer");
+    //var range = document.getElementById("range");
+
+    function randomizeNote() {
+        var shangxian = 19;
+        var xiaxian = 0;
+        var seed = Math.floor(xiaxian + (Math.random() * (shangxian - xiaxian)));
+        if (mode == "up") {
+            note.className = notesUp[seed];
+        } else if (mode == "down") {
+            note.className = notesDown[seed];
+        } else {
+            if (Math.random() > 0.5) {
+                note.className = notesUp[seed];
+            } else {
+                note.className = notesDown[seed];
+            }
+        }
+    }
+
+    var noteToSolfege = {
+        'A': 'La',
+        'B': 'Si',
+        'C': 'Do',
+        'D': 'Re',
+        'E': 'Mi',
+        'F': 'Fa',
+        'G': 'Sol'
+    };
+
+    var fun1 = function (event) {
+        event.preventDefault();
+        this.style.backgroundColor="#EAEAEA";
+    };
+    changeShow.addEventListener("touchstart", fun1);
+    changeShow.addEventListener("mousedown", fun1);
+
+    changeShow.addEventListener("change", function(event) {
+        var display = this.checked ? "" : "none";
+        for(var i=keyNames.length-1; i>=0; i--){
+            keyNames[i].style.display = display;
+        }
+        show = this.checked;
+    });
+
+
+    changeMode.addEventListener("change", function(event) {
+        mode = this.value;
+        randomizeNote();
+    });
+
+
+    var fun5 = function (event) {
+        event.preventDefault();
+        var target = event.target;
+        if(target.nodeName==="SPAN"){
+            target = target.parentNode;
+        }
+        if(target.className.search("pressUp")!==-1){
+            target.className=target.className.replace("pressUp","pressDown");
+        }else{
+            target.className+=" pressDown";
+        }
+    };
+    painoDown.addEventListener("touchstart", fun5);
+    painoDown.addEventListener("mousedown", fun5);
+
+
+    var fun6 = function (event) {
+        event.preventDefault();
+        var target = event.target;
+        var key = note.className.slice(-1);
+        if(target.nodeName==="SPAN"){
+            target = target.parentNode;
+        }
+        target.className=target.className.replace("pressDown","pressUp");
+        if(target.className.split(/[^^]key/)[1][0]===note.className.slice(-1)){
+            //right
+            randomizeNote();
+
+            wrong.style.display="none";
+            right.style.display="";
+            tips.className="";
+            answer.innerHTML=key + "/" + noteToSolfege[key];
+            setTimeout(function(){
+                tips.className="easeout";
+            },10);
+        }else{
+            //wrong
+            wrong.style.display="";
+            right.style.display="none";
+            tips.className="";
+            answer.innerHTML=key + "/" + noteToSolfege[key];
+            setTimeout(function(){
+                tips.className="easeout";
+            },10);
+        }
+    };
+    painoDown.addEventListener("touchend", fun6);
+    painoDown.addEventListener("mouseup", fun6);
+
+    randomizeNote();
+</script>
+</html>
