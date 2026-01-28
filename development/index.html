@@ -299,142 +299,20 @@
             100% {background-color: #ffffff;}
         }
 
-        /* 大键盘样式 - 88键 */
+        /* 大键盘样式 - 88键 SVG */
         #full-piano {
             position: relative;
             width: 100%;
-            height: 80px;
+            height: auto;
             margin-top: 10px;
             border-top: 1px solid gray;
         }
 
-        .full-keyDown {
-            width: 1.923%; /* 52个白键均分100% */
-            background-color: #fff;
-            border-radius: 2px;
-            border: 1px solid black;
-            position: absolute;
-            bottom: 0;
-            height: 80px;
-            box-sizing: border-box;
+        #full-piano img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
-
-        .full-keyUp {
-            width: 1.2%; /* 黑键宽度 */
-            background-color: #000;
-            border-radius: 2px;
-            position: absolute;
-            bottom: 35%;
-            height: 45px;
-            z-index: 10;
-        }
-
-        /* 88键位置定义 - A0到C8 */
-        /* 第1组 (A0-B0) */
-        .full-A0 { left: 0%; }
-        .full-B0 { left: 1.923%; }
-        .full-Bb0 { left: 1.2%; }
-
-        /* 第1组 (C1-B1) */
-        .full-C1 { left: 3.846%; }
-        .full-D1 { left: 5.769%; }
-        .full-E1 { left: 7.692%; }
-        .full-F1 { left: 9.615%; }
-        .full-G1 { left: 11.538%; }
-        .full-A1 { left: 13.461%; }
-        .full-B1 { left: 15.384%; }
-        .full-Db1 { left: 4.8%; }
-        .full-Eb1 { left: 6.7%; }
-        .full-Gb1 { left: 10.5%; }
-        .full-Ab1 { left: 12.4%; }
-        .full-Bb1 { left: 14.3%; }
-
-        /* 第2组 (C2-B2) */
-        .full-C2 { left: 17.307%; }
-        .full-D2 { left: 19.23%; }
-        .full-E2 { left: 21.153%; }
-        .full-F2 { left: 23.076%; }
-        .full-G2 { left: 25%; }
-        .full-A2 { left: 26.923%; }
-        .full-B2 { left: 28.846%; }
-        .full-Db2 { left: 18.3%; }
-        .full-Eb2 { left: 20.2%; }
-        .full-Gb2 { left: 24%; }
-        .full-Ab2 { left: 25.9%; }
-        .full-Bb2 { left: 27.8%; }
-
-        /* 第3组 (C3-B3) */
-        .full-C3 { left: 30.769%; }
-        .full-D3 { left: 32.692%; }
-        .full-E3 { left: 34.615%; }
-        .full-F3 { left: 36.538%; }
-        .full-G3 { left: 38.461%; }
-        .full-A3 { left: 40.384%; }
-        .full-B3 { left: 42.307%; }
-        .full-Db3 { left: 31.8%; }
-        .full-Eb3 { left: 33.7%; }
-        .full-Gb3 { left: 37.5%; }
-        .full-Ab3 { left: 39.4%; }
-        .full-Bb3 { left: 41.3%; }
-
-        /* 第4组 (C4-B4) - 中央C */
-        .full-C4 { left: 44.23%; }
-        .full-D4 { left: 46.153%; }
-        .full-E4 { left: 48.076%; }
-        .full-F4 { left: 50%; }
-        .full-G4 { left: 51.923%; }
-        .full-A4 { left: 53.846%; }
-        .full-B4 { left: 55.769%; }
-        .full-Db4 { left: 45.2%; }
-        .full-Eb4 { left: 47.1%; }
-        .full-Gb4 { left: 50.9%; }
-        .full-Ab4 { left: 52.8%; }
-        .full-Bb4 { left: 54.7%; }
-
-        /* 第5组 (C5-B5) */
-        .full-C5 { left: 57.692%; }
-        .full-D5 { left: 59.615%; }
-        .full-E5 { left: 61.538%; }
-        .full-F5 { left: 63.461%; }
-        .full-G5 { left: 65.384%; }
-        .full-A5 { left: 67.307%; }
-        .full-B5 { left: 69.23%; }
-        .full-Db5 { left: 58.7%; }
-        .full-Eb5 { left: 60.6%; }
-        .full-Gb5 { left: 64.4%; }
-        .full-Ab5 { left: 66.3%; }
-        .full-Bb5 { left: 68.2%; }
-
-        /* 第6组 (C6-B6) */
-        .full-C6 { left: 71.153%; }
-        .full-D6 { left: 73.076%; }
-        .full-E6 { left: 75%; }
-        .full-F6 { left: 76.923%; }
-        .full-G6 { left: 78.846%; }
-        .full-A6 { left: 80.769%; }
-        .full-B6 { left: 82.692%; }
-        .full-Db6 { left: 72.1%; }
-        .full-Eb6 { left: 74%; }
-        .full-Gb6 { left: 77.8%; }
-        .full-Ab6 { left: 79.7%; }
-        .full-Bb6 { left: 81.6%; }
-
-        /* 第7组 (C7-B7) */
-        .full-C7 { left: 84.615%; }
-        .full-D7 { left: 86.538%; }
-        .full-E7 { left: 88.461%; }
-        .full-F7 { left: 90.384%; }
-        .full-G7 { left: 92.307%; }
-        .full-A7 { left: 94.23%; }
-        .full-B7 { left: 96.153%; }
-        .full-Db7 { left: 85.6%; }
-        .full-Eb7 { left: 87.5%; }
-        .full-Gb7 { left: 91.3%; }
-        .full-Ab7 { left: 93.2%; }
-        .full-Bb7 { left: 95.1%; }
-
-        /* 第8组 (C8) */
-        .full-C8 { left: 98.076%; width: auto; right: 0; }
 
     </style>
 </head>
@@ -487,96 +365,7 @@
         </div>
         <!-- 88键大键盘 -->
         <div id="full-piano">
-            <!-- 白键 -->
-            <div class="full-keyDown full-A0"></div>
-            <div class="full-keyDown full-B0"></div>
-            <div class="full-keyDown full-C1"></div>
-            <div class="full-keyDown full-D1"></div>
-            <div class="full-keyDown full-E1"></div>
-            <div class="full-keyDown full-F1"></div>
-            <div class="full-keyDown full-G1"></div>
-            <div class="full-keyDown full-A1"></div>
-            <div class="full-keyDown full-B1"></div>
-            <div class="full-keyDown full-C2"></div>
-            <div class="full-keyDown full-D2"></div>
-            <div class="full-keyDown full-E2"></div>
-            <div class="full-keyDown full-F2"></div>
-            <div class="full-keyDown full-G2"></div>
-            <div class="full-keyDown full-A2"></div>
-            <div class="full-keyDown full-B2"></div>
-            <div class="full-keyDown full-C3"></div>
-            <div class="full-keyDown full-D3"></div>
-            <div class="full-keyDown full-E3"></div>
-            <div class="full-keyDown full-F3"></div>
-            <div class="full-keyDown full-G3"></div>
-            <div class="full-keyDown full-A3"></div>
-            <div class="full-keyDown full-B3"></div>
-            <div class="full-keyDown full-C4"></div>
-            <div class="full-keyDown full-D4"></div>
-            <div class="full-keyDown full-E4"></div>
-            <div class="full-keyDown full-F4"></div>
-            <div class="full-keyDown full-G4"></div>
-            <div class="full-keyDown full-A4"></div>
-            <div class="full-keyDown full-B4"></div>
-            <div class="full-keyDown full-C5"></div>
-            <div class="full-keyDown full-D5"></div>
-            <div class="full-keyDown full-E5"></div>
-            <div class="full-keyDown full-F5"></div>
-            <div class="full-keyDown full-G5"></div>
-            <div class="full-keyDown full-A5"></div>
-            <div class="full-keyDown full-B5"></div>
-            <div class="full-keyDown full-C6"></div>
-            <div class="full-keyDown full-D6"></div>
-            <div class="full-keyDown full-E6"></div>
-            <div class="full-keyDown full-F6"></div>
-            <div class="full-keyDown full-G6"></div>
-            <div class="full-keyDown full-A6"></div>
-            <div class="full-keyDown full-B6"></div>
-            <div class="full-keyDown full-C7"></div>
-            <div class="full-keyDown full-D7"></div>
-            <div class="full-keyDown full-E7"></div>
-            <div class="full-keyDown full-F7"></div>
-            <div class="full-keyDown full-G7"></div>
-            <div class="full-keyDown full-A7"></div>
-            <div class="full-keyDown full-B7"></div>
-            <div class="full-keyDown full-C8"></div>
-            <!-- 黑键 -->
-            <div class="full-keyUp full-Bb0"></div>
-            <div class="full-keyUp full-Db1"></div>
-            <div class="full-keyUp full-Eb1"></div>
-            <div class="full-keyUp full-Gb1"></div>
-            <div class="full-keyUp full-Ab1"></div>
-            <div class="full-keyUp full-Bb1"></div>
-            <div class="full-keyUp full-Db2"></div>
-            <div class="full-keyUp full-Eb2"></div>
-            <div class="full-keyUp full-Gb2"></div>
-            <div class="full-keyUp full-Ab2"></div>
-            <div class="full-keyUp full-Bb2"></div>
-            <div class="full-keyUp full-Db3"></div>
-            <div class="full-keyUp full-Eb3"></div>
-            <div class="full-keyUp full-Gb3"></div>
-            <div class="full-keyUp full-Ab3"></div>
-            <div class="full-keyUp full-Bb3"></div>
-            <div class="full-keyUp full-Db4"></div>
-            <div class="full-keyUp full-Eb4"></div>
-            <div class="full-keyUp full-Gb4"></div>
-            <div class="full-keyUp full-Ab4"></div>
-            <div class="full-keyUp full-Bb4"></div>
-            <div class="full-keyUp full-Db5"></div>
-            <div class="full-keyUp full-Eb5"></div>
-            <div class="full-keyUp full-Gb5"></div>
-            <div class="full-keyUp full-Ab5"></div>
-            <div class="full-keyUp full-Bb5"></div>
-            <div class="full-keyUp full-Db6"></div>
-            <div class="full-keyUp full-Eb6"></div>
-            <div class="full-keyUp full-Gb6"></div>
-            <div class="full-keyUp full-Ab6"></div>
-            <div class="full-keyUp full-Bb6"></div>
-            <div class="full-keyUp full-Db7"></div>
-            <div class="full-keyUp full-Eb7"></div>
-            <div class="full-keyUp full-Gb7"></div>
-            <div class="full-keyUp full-Ab7"></div>
-            <div class="full-keyUp full-Bb7"></div>
+            <img src="piano-88-keys.svg" alt="88键钢琴键盘">
         </div>
     </div>
 </body>

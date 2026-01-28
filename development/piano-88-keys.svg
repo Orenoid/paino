@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1250 80" width="1250" height="80">
+  <!-- 88键钢琴键盘 SVG -->
+  <!-- 白键 52个 -->
+  <g id="white-keys">
+    <!-- A0-B0 -->
+    <rect x="0" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="24.04" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <!-- C1-B1 -->
+    <rect x="48.08" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="72.12" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="96.16" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="120.2" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="144.24" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="168.28" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="192.32" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <!-- C2-B2 -->
+    <rect x="216.36" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="240.4" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="264.44" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="288.48" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="312.52" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="336.56" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="360.6" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <!-- C3-B3 -->
+    <rect x="384.64" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="408.68" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="432.72" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="456.76" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="480.8" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="504.84" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="528.88" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <!-- C4-B4 (中央C) -->
+    <rect x="552.92" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="576.96" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="601" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="625.04" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="649.08" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="673.12" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="697.16" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <!-- C5-B5 -->
+    <rect x="721.2" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="745.24" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="769.28" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="793.32" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="817.36" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="841.4" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="865.44" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <!-- C6-B6 -->
+    <rect x="889.48" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="913.52" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="937.56" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="961.6" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="985.64" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="1009.68" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="1033.72" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <!-- C7-B7 -->
+    <rect x="1057.76" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="1081.8" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="1105.84" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="1129.88" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="1153.92" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="1177.96" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <rect x="1202" y="0" width="24.04" height="80" fill="white" stroke="black" stroke-width="1"/>
+    <!-- C8 -->
+    <rect x="1226.04" y="0" width="23.96" height="80" fill="white" stroke="black" stroke-width="1"/>
+  </g>
+
+  <!-- 黑键 36个 -->
+  <g id="black-keys">
+    <!-- Bb0 -->
+    <rect x="16.02" y="0" width="16" height="50" fill="black"/>
+    <!-- Db1, Eb1, Gb1, Ab1, Bb1 -->
+    <rect x="60.1" y="0" width="16" height="50" fill="black"/>
+    <rect x="84.14" y="0" width="16" height="50" fill="black"/>
+    <rect x="132.22" y="0" width="16" height="50" fill="black"/>
+    <rect x="156.26" y="0" width="16" height="50" fill="black"/>
+    <rect x="180.3" y="0" width="16" height="50" fill="black"/>
+    <!-- Db2, Eb2, Gb2, Ab2, Bb2 -->
+    <rect x="228.38" y="0" width="16" height="50" fill="black"/>
+    <rect x="252.42" y="0" width="16" height="50" fill="black"/>
+    <rect x="300.5" y="0" width="16" height="50" fill="black"/>
+    <rect x="324.54" y="0" width="16" height="50" fill="black"/>
+    <rect x="348.58" y="0" width="16" height="50" fill="black"/>
+    <!-- Db3, Eb3, Gb3, Ab3, Bb3 -->
+    <rect x="396.66" y="0" width="16" height="50" fill="black"/>
+    <rect x="420.7" y="0" width="16" height="50" fill="black"/>
+    <rect x="468.78" y="0" width="16" height="50" fill="black"/>
+    <rect x="492.82" y="0" width="16" height="50" fill="black"/>
+    <rect x="516.86" y="0" width="16" height="50" fill="black"/>
+    <!-- Db4, Eb4, Gb4, Ab4, Bb4 -->
+    <rect x="564.94" y="0" width="16" height="50" fill="black"/>
+    <rect x="588.98" y="0" width="16" height="50" fill="black"/>
+    <rect x="637.06" y="0" width="16" height="50" fill="black"/>
+    <rect x="661.1" y="0" width="16" height="50" fill="black"/>
+    <rect x="685.14" y="0" width="16" height="50" fill="black"/>
+    <!-- Db5, Eb5, Gb5, Ab5, Bb5 -->
+    <rect x="733.22" y="0" width="16" height="50" fill="black"/>
+    <rect x="757.26" y="0" width="16" height="50" fill="black"/>
+    <rect x="805.34" y="0" width="16" height="50" fill="black"/>
+    <rect x="829.38" y="0" width="16" height="50" fill="black"/>
+    <rect x="853.42" y="0" width="16" height="50" fill="black"/>
+    <!-- Db6, Eb6, Gb6, Ab6, Bb6 -->
+    <rect x="901.5" y="0" width="16" height="50" fill="black"/>
+    <rect x="925.54" y="0" width="16" height="50" fill="black"/>
+    <rect x="973.62" y="0" width="16" height="50" fill="black"/>
+    <rect x="997.66" y="0" width="16" height="50" fill="black"/>
+    <rect x="1021.7" y="0" width="16" height="50" fill="black"/>
+    <!-- Db7, Eb7, Gb7, Ab7, Bb7 -->
+    <rect x="1069.78" y="0" width="16" height="50" fill="black"/>
+    <rect x="1093.82" y="0" width="16" height="50" fill="black"/>
+    <rect x="1141.9" y="0" width="16" height="50" fill="black"/>
+    <rect x="1165.94" y="0" width="16" height="50" fill="black"/>
+    <rect x="1189.98" y="0" width="16" height="50" fill="black"/>
+  </g>
+
+  <!-- C4标记 (中央C) -->
+  <text x="552.92" y="72" font-size="10" fill="black" text-anchor="middle">C4</text>
+</svg>
