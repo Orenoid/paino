@@ -411,32 +411,32 @@
             height: 100px;
         }
 
-        /* 小三角 */
+        /* 小三角 - 在弹出框顶部 */
         #piano-popup::after {
             content: '';
             position: absolute;
-            bottom: -12px;
+            top: -12px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
             border-left: 12px solid transparent;
             border-right: 12px solid transparent;
-            border-top: 12px solid #333;
+            border-bottom: 12px solid #333;
         }
 
         /* 小三角内部白色（与弹出框背景一致） */
         #piano-popup::before {
             content: '';
             position: absolute;
-            bottom: -9px;
+            top: -9px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
             border-left: 10px solid transparent;
             border-right: 10px solid transparent;
-            border-top: 10px solid white;
+            border-bottom: 10px solid white;
             z-index: 101;
         }
 
@@ -716,7 +716,7 @@
         maskContainer.innerHTML = '';
     }
 
-    // 显示弹出框在指定音组上方
+    // 显示弹出框在指定音组下方
     function showPopup(groupIndex) {
         var groupPos = groupPositions[groupIndex];
         var fullPianoRect = fullPiano.getBoundingClientRect();
@@ -739,9 +739,9 @@
             popupLeft = containerWidth - popupWidth - 10;
         }
 
-        // 设置弹出框位置（在大键盘上方）
+        // 设置弹出框位置（在大键盘下方，靠近一点）
         pianoPopup.style.left = popupLeft + 'px';
-        pianoPopup.style.bottom = (fullPianoRect.height + 10) + 'px';
+        pianoPopup.style.top = (fullPianoRect.bottom - containerRect.top + 5) + 'px';
         pianoPopup.style.display = 'block';
     }
 
