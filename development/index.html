@@ -563,12 +563,22 @@
     painoDown.addEventListener("touchend", fun6);
     painoDown.addEventListener("mouseup", fun6);
 
-    // ========== 新交互逻辑 ==========
-    var selectedGroup = null; // 当前选中的组
-    var currentNote = null; // 当前题目音符的完整信息
+    // ========== 状态机实现 ==========
+    var State = {
+        IDLE: 'IDLE',              // 初始状态，等待选组
+        GROUP_SELECTED: 'GROUP_SELECTED',  // 已选组，等待选琴键
+        ANSWERING: 'ANSWERING'     // 答题中（防止重复触发）
+    };
+
+    var gameState = {
+        status: State.IDLE,
+        selectedGroup: null,
+        correctGroup: null
+    };
+
     var maskContainer = document.getElementById('mask-container');
 
-    // 组位置配置（与CSS对应）
+    // 组位置配置
     var groupPositions = [
         { left: '0%', width: '3.846%' },      // 0: A0-B0
         { left: '3.846%', width: '13.461%' }, // 1: C1-B1
@@ -581,35 +591,22 @@
         { left: '98.073%', width: '1.927%' }  // 8: C8
     ];
 
-    // 音符到组的映射（根据五线谱位置判断）
+    // 音符到组的映射
     function getNoteGroup(noteClass) {
-        // 组定义: 0=A0-B0, 1=C1-B1, 2=C2-B2, 3=C3-B3, 4=C4-B4(中央C), 5=C5-B5, 6=C6-B6, 7=C7-B7, 8=C8
-        // 钢琴音组: 大字组(0), 大字一组(1), 大字二组(2), 小字组(3), 小字一组(4), 小字二组(5), 小字三组(6), 小字四组(7), C8(8)
         var noteGroups = {
-            // ===== 高音谱表 =====
-            // 小字四组 (C7-B7) - 组7
             'Up3D': 7, 'Up3C': 7, 'Up3B': 7, 'Up3A': 7,
-            // 小字三组 (C6-B6) - 组6
             'Up2G': 6, 'Up2F': 6, 'Up2E': 6, 'Up2D': 6, 'Up2C': 6, 'Up2B': 6, 'Up2A': 6,
-            // 小字二组 (C5-B5) - 组5
             'Up1G': 5, 'Up1F': 5, 'Up1E': 5, 'Up1D': 5, 'Up1C': 5, 'Up1B': 5, 'Up1A': 5,
-            // 小字一组 (C4-B4) - 组4
             'Up0G': 4,
-
-            // ===== 低音谱表 =====
-            // 小字一组 (C4-B4) - 组4
             'Down3F': 4, 'Down3E': 4, 'Down3D': 4, 'Down3C': 4,
-            // 小字组 (C3-B3) - 组3
             'Down3B': 3, 'Down3A': 3, 'Down2G': 3, 'Down2F': 3, 'Down2E': 3, 'Down2D': 3, 'Down2C': 3,
-            // 大字二组 (C2-B2) - 组2
             'Down2B': 2, 'Down2A': 2, 'Down1G': 2, 'Down1F': 2, 'Down1E': 2, 'Down1D': 2, 'Down1C': 2,
-            // 大字一组 (C1-B1) - 组1
             'Down1B': 1
         };
         return noteGroups[noteClass] !== undefined ? noteGroups[noteClass] : 4;
     }
 
-    // 创建遮罩
+    // 工具函数
     function createMask(groupIndex, colorClass) {
         var mask = document.createElement('div');
         mask.className = 'group-mask ' + colorClass;
@@ -618,19 +615,16 @@
         return mask;
     }
 
-    // 创建大键盘整体遮罩
     function createFullPianoMask() {
         var mask = document.createElement('div');
         mask.className = 'full-piano-mask mask-yellow';
         return mask;
     }
 
-    // 清除所有遮罩
     function clearMasks() {
         maskContainer.innerHTML = '';
     }
 
-    // 显示提示（使用现有tips区域）
     function showMessage(message, type) {
         wrong.style.display = type === 'wrong' ? '' : 'none';
         right.style.display = type === 'right' ? '' : 'none';
@@ -641,97 +635,96 @@
         }, 10);
     }
 
-    // 大键盘组点击事件
+    // 重置游戏状态（用于下一题）
+    function resetGame() {
+        gameState.status = State.IDLE;
+        gameState.selectedGroup = null;
+        gameState.correctGroup = null;
+        clearMasks();
+    }
+
+    // 初始化新题目
+    function initNewQuestion() {
+        randomizeNote();
+        gameState.correctGroup = getNoteGroup(note.className);
+        resetGame();
+    }
+
+    // 大键盘组点击处理
     var octaveGroups = document.querySelectorAll('.octave-group');
     octaveGroups.forEach(function(group) {
         group.addEventListener('click', function() {
             var groupNum = parseInt(this.getAttribute('data-group'));
-            var correctGroup = getNoteGroup(note.className);
 
-            if (groupNum === correctGroup) {
-                // 情况1：选择了正确的组
-                selectedGroup = groupNum;
-                clearMasks();
-                maskContainer.appendChild(createMask(groupNum, 'mask-gray'));
-            } else {
-                // 情况2：选择了错误的组
-                // 用户点击的组无效果，正确组显示浅红色遮罩1秒后消失
-                var correctMask = createMask(correctGroup, 'mask-red');
-                maskContainer.appendChild(correctMask);
-                setTimeout(function() {
-                    if (correctMask.parentNode === maskContainer) {
-                        maskContainer.removeChild(correctMask);
-                    }
-                }, 1000);
+            if (gameState.status === State.IDLE) {
+                if (groupNum === gameState.correctGroup) {
+                    // IDLE → GROUP_SELECTED: 选择正确组
+                    gameState.status = State.GROUP_SELECTED;
+                    gameState.selectedGroup = groupNum;
+                    maskContainer.appendChild(createMask(groupNum, 'mask-gray'));
+                } else {
+                    // IDLE → IDLE: 选择错误组，显示红色提示
+                    var correctMask = createMask(gameState.correctGroup, 'mask-red');
+                    maskContainer.appendChild(correctMask);
+                    setTimeout(function() {
+                        if (correctMask.parentNode === maskContainer) {
+                            maskContainer.removeChild(correctMask);
+                        }
+                    }, 1000);
+                }
             }
+            // GROUP_SELECTED 状态下点击其他组：忽略
         });
     });
 
-    // 小键盘点击事件 - 重写
+    // 小键盘点击处理
     var fun6 = function(event) {
         event.preventDefault();
+
+        if (gameState.status === State.ANSWERING) {
+            return; // 防止重复点击
+        }
+
         var target = event.target;
         var key = note.className.slice(-1);
-        if(target.nodeName === "SPAN") {
+        if (target.nodeName === "SPAN") {
             target = target.parentNode;
         }
         target.className = target.className.replace("pressDown", "pressUp");
 
-        // 情况3：未选择组直接点小键盘
-        if (selectedGroup === null) {
-            // 显示大键盘黄色遮罩
+        if (gameState.status === State.IDLE) {
+            // 未选组直接点小键盘
             clearMasks();
             maskContainer.appendChild(createFullPianoMask());
             showMessage('请先选择音组', 'wrong');
-            // 2秒后清除遮罩
             setTimeout(function() {
                 clearMasks();
             }, 2000);
             return;
         }
 
-        var correctGroup = getNoteGroup(note.className);
-        var clickedKey = target.className.split(/[^^]key/)[1][0];
+        if (gameState.status === State.GROUP_SELECTED) {
+            gameState.status = State.ANSWERING;
+            var clickedKey = target.className.split(/[^^]key/)[1][0];
 
-        // 检查是否选择了正确的组
-        if (selectedGroup !== correctGroup) {
-            // 组错了，但这种情况应该在选组时就处理了
-            showMessage('组错误', 'wrong');
-            return;
-        }
-
-        // 情况4：组正确，检查音
-        if (clickedKey === key) {
-            // 答对了
-            wrong.style.display = "none";
-            right.style.display = "";
-            tips.className = "";
-            answer.innerHTML = key + "/" + noteToSolfege[key];
-            setTimeout(function() {
-                tips.className = "easeout";
-            }, 10);
-            // 清除选中状态，准备下一题
-            selectedGroup = null;
-            clearMasks();
-            randomizeNote();
-        } else {
-            // 情况4：组对但音错了
-            wrong.style.display = "";
-            right.style.display = "none";
-            tips.className = "";
-            answer.innerHTML = key + "/" + noteToSolfege[key];
-            setTimeout(function() {
-                tips.className = "easeout";
-            }, 10);
+            if (clickedKey === key) {
+                // 答对：显示正确，然后下一题
+                showMessage(key + "/" + noteToSolfege[key], 'right');
+                setTimeout(function() {
+                    initNewQuestion();
+                }, 1500);
+            } else {
+                // 答错：显示错误，保持当前状态等待再次尝试
+                showMessage(key + "/" + noteToSolfege[key], 'wrong');
+                gameState.status = State.GROUP_SELECTED; // 恢复状态，允许再次尝试
+            }
         }
     };
 
-    // 移除旧的事件监听器并重新添加
-    painoDown.removeEventListener("touchend", fun6);
-    painoDown.removeEventListener("mouseup", fun6);
     painoDown.addEventListener("touchend", fun6);
     painoDown.addEventListener("mouseup", fun6);
 
-    randomizeNote();
+    // 初始化第一题
+    initNewQuestion();
 </script>
 </html>
