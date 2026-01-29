@@ -584,32 +584,23 @@
     function getNoteGroup(noteClass) {
         var noteGroups = {
             // ===== 高音谱表 (Up) =====
-            // 上加三间到上加一间 (D6-A6) -> Group 6
-            'Up3D': 6, 'Up3C': 6, 'Up3B': 6, 'Up3A': 6,
-
-            // 上加二线到第三间 (A5-F5) -> Group 5
-            'Up2G': 5, 'Up2F': 5, 'Up2E': 5, 'Up2D': 5, 'Up2C': 5, 'Up2B': 5, 'Up2A': 5,
-
-            // 第二间到下加二线 (E4-B3) -> Group 3-4
-            // 中央C(C4)在下加一线，属于Group 4
-            'Up1G': 4, 'Up1F': 4, 'Up1E': 4, 'Up1D': 4, 'Up1C': 4,
-            'Up1B': 3, 'Up1A': 3,
-
-            // 下加三间 (G3) -> Group 3
-            'Up0G': 3,
+            // Group 6: C6, D6
+            'Up3D': 6, 'Up3C': 6,
+            // Group 5: C5, D5, E5, F5, G5, A5, B5
+            'Up3B': 5, 'Up3A': 5, 'Up2G': 5, 'Up2F': 5, 'Up2E': 5, 'Up2D': 5, 'Up2C': 5,
+            // Group 4: C4, D4, E4, F4, G4, A4, B4 (中央C组)
+            'Up2B': 4, 'Up2A': 4, 'Up1G': 4, 'Up1F': 4, 'Up1E': 4, 'Up1D': 4, 'Up1C': 4,
+            // Group 3: A3, B3, C3, D3, E3, F3, G3
+            'Up1B': 3, 'Up1A': 3, 'Up0G': 3,
 
             // ===== 低音谱表 (Down) =====
-            // 上加三间到上加二线 (F4-G3) -> Group 3-4
-            // 中央C(C4)在第三间，属于Group 4
+            // Group 4: C4, D4, E4, F4 (中央C组)
             'Down3F': 4, 'Down3E': 4, 'Down3D': 4, 'Down3C': 4,
-            'Down3B': 3, 'Down3A': 3,
-
-            // 上加一线到第四间 (B2-E3) -> Group 2-3
-            'Down2G': 3, 'Down2F': 3, 'Down2E': 3, 'Down2D': 3, 'Down2C': 3,
-            'Down2B': 2, 'Down2A': 2,
-
-            // 第三间到下加三间 (D2-B1) -> Group 1-2
-            'Down1G': 2, 'Down1F': 2, 'Down1E': 2, 'Down1D': 2, 'Down1C': 2,
+            // Group 3: A3, B3, C3, D3, E3, F3, G3
+            'Down3B': 3, 'Down3A': 3, 'Down2G': 3, 'Down2F': 3, 'Down2E': 3, 'Down2D': 3, 'Down2C': 3,
+            // Group 2: C2, D2, E2, F2, G2, A2, B2
+            'Down2B': 2, 'Down2A': 2, 'Down1G': 2, 'Down1F': 2, 'Down1E': 2, 'Down1D': 2, 'Down1C': 2,
+            // Group 1: B1 (低音谱表最低音)
             'Down1B': 1
         };
         return noteGroups[noteClass] !== undefined ? noteGroups[noteClass] : 4;
