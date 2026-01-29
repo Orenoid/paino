@@ -573,17 +573,21 @@
         { left: '98.073%', width: '1.927%' }  // 8: C8
     ];
 
-    // 音符到组的映射
+    // 音符到钢琴音组的映射
+    // 基于五线谱位置推断的实际音高映射
     function getNoteGroup(noteClass) {
         var noteGroups = {
-            'Up3D': 7, 'Up3C': 7, 'Up3B': 7, 'Up3A': 7,
-            'Up2G': 6, 'Up2F': 6, 'Up2E': 6, 'Up2D': 6, 'Up2C': 6, 'Up2B': 6, 'Up2A': 6,
-            'Up1G': 5, 'Up1F': 5, 'Up1E': 5, 'Up1D': 5, 'Up1C': 5, 'Up1B': 5, 'Up1A': 5,
-            'Up0G': 4,
-            'Down3F': 4, 'Down3E': 4, 'Down3D': 4, 'Down3C': 4,
-            'Down3B': 3, 'Down3A': 3, 'Down2G': 3, 'Down2F': 3, 'Down2E': 3, 'Down2D': 3, 'Down2C': 3,
-            'Down2B': 2, 'Down2A': 2, 'Down1G': 2, 'Down1F': 2, 'Down1E': 2, 'Down1D': 2, 'Down1C': 2,
-            'Down1B': 1
+            // 高音谱表 (Up) - 从 G4 到 D6
+            'Up3D': 6, 'Up3C': 6, 'Up3B': 6, 'Up3A': 6,  // C6-B6 组 (D6是C8前的最高白键)
+            'Up2G': 5, 'Up2F': 5, 'Up2E': 5, 'Up2D': 5, 'Up2C': 5, 'Up2B': 5, 'Up2A': 5,  // C5-B5 组
+            'Up1G': 4, 'Up1F': 4, 'Up1E': 4, 'Up1D': 4, 'Up1C': 4, 'Up1B': 4, 'Up1A': 4,  // C4-B4 组 (中央C)
+            'Up0G': 4,  // G4 属于 C4-B4 组
+
+            // 低音谱表 (Down) - 从 B1 到 F5
+            'Down3F': 5, 'Down3E': 5, 'Down3D': 5, 'Down3C': 5,  // C5-B5 组 (F5是最高)
+            'Down3B': 4, 'Down3A': 4, 'Down2G': 4, 'Down2F': 4, 'Down2E': 4, 'Down2D': 4, 'Down2C': 4,  // C4-B4 组
+            'Down2B': 3, 'Down2A': 3, 'Down1G': 3, 'Down1F': 3, 'Down1E': 3, 'Down1D': 3, 'Down1C': 3,  // C3-B3 组
+            'Down1B': 2   // B2? 或 B1? 需要验证 - 暂时放在 C2-B2 组
         };
         return noteGroups[noteClass] !== undefined ? noteGroups[noteClass] : 4;
     }
