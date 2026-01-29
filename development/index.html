@@ -320,11 +320,46 @@
             top: 0;
             height: 100%;
             cursor: pointer;
-            background-color: rgba(255, 0, 0, 0.1); /* 调试用，半透明红色 */
+            z-index: 10;
         }
 
         .octave-group:hover {
-            background-color: rgba(255, 0, 0, 0.3);
+            background-color: rgba(200, 200, 200, 0.2);
+        }
+
+        /* 组遮罩 - 统一样式，不同颜色 */
+        .group-mask {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* 灰色遮罩 - 正确组选中 */
+        .mask-gray {
+            background-color: rgba(128, 128, 128, 0.4);
+        }
+
+        /* 浅红色遮罩 - 错误提示 */
+        .mask-red {
+            background-color: rgba(255, 100, 100, 0.4);
+        }
+
+        /* 浅黄色遮罩 - 警告提示 */
+        .mask-yellow {
+            background-color: rgba(255, 255, 100, 0.4);
+        }
+
+        /* 大键盘整体遮罩 */
+        .full-piano-mask {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 8;
         }
 
         /* 各组位置 - 基于52个白键均分100%宽度 */
@@ -409,6 +444,8 @@
             <div class="octave-group group-6" data-group="6" data-note="C6-B6"></div>
             <div class="octave-group group-7" data-group="7" data-note="C7-B7"></div>
             <div class="octave-group group-8" data-group="8" data-note="C8"></div>
+            <!-- 遮罩层容器 -->
+            <div id="mask-container"></div>
         </div>
     </div>
 </body>
@@ -526,16 +563,166 @@
     painoDown.addEventListener("touchend", fun6);
     painoDown.addEventListener("mouseup", fun6);
 
-    randomizeNote();
+    // ========== 新交互逻辑 ==========
+    var selectedGroup = null; // 当前选中的组
+    var currentNote = null; // 当前题目音符的完整信息
+    var maskContainer = document.getElementById('mask-container');
+
+    // 组位置配置（与CSS对应）
+    var groupPositions = [
+        { left: '0%', width: '3.846%' },      // 0: A0-B0
+        { left: '3.846%', width: '13.461%' }, // 1: C1-B1
+        { left: '17.307%', width: '13.461%' },// 2: C2-B2
+        { left: '30.768%', width: '13.461%' },// 3: C3-B3
+        { left: '44.229%', width: '13.461%' },// 4: C4-B4
+        { left: '57.69%', width: '13.461%' }, // 5: C5-B5
+        { left: '71.151%', width: '13.461%' },// 6: C6-B6
+        { left: '84.612%', width: '13.461%' },// 7: C7-B7
+        { left: '98.073%', width: '1.927%' }  // 8: C8
+    ];
+
+    // 音符到组的映射（根据五线谱位置判断）
+    function getNoteGroup(noteClass) {
+        // 根据音符类名返回对应的组号
+        // 高音谱表: Up3D(组8) 到 Up0G(组4)
+        // 低音谱表: Down3F(组4) 到 Down1B(组0)
+        var noteGroups = {
+            // 高音谱表 - 从低到高
+            'Up0G': 4, 'Up1A': 4, 'Up1B': 4,
+            'Up1C': 5, 'Up1D': 5, 'Up1E': 5, 'Up1F': 5, 'Up1G': 5, 'Up2A': 5, 'Up2B': 5,
+            'Up2C': 6, 'Up2D': 6, 'Up2E': 6, 'Up2F': 6, 'Up2G': 6, 'Up3A': 6, 'Up3B': 6,
+            'Up3C': 7, 'Up3D': 7,
+            // 低音谱表 - 从低到高
+            'Down1B': 0, 'Down1C': 1, 'Down1D': 1, 'Down1E': 1, 'Down1F': 1, 'Down1G': 1, 'Down2A': 1, 'Down2B': 1,
+            'Down2C': 2, 'Down2D': 2, 'Down2E': 2, 'Down2F': 2, 'Down2G': 2, 'Down3A': 2, 'Down3B': 2,
+            'Down3C': 3, 'Down3D': 3, 'Down3E': 3, 'Down3F': 4
+        };
+        return noteGroups[noteClass] !== undefined ? noteGroups[noteClass] : 4; // 默认中央C组
+    }
+
+    // 创建遮罩
+    function createMask(groupIndex, colorClass) {
+        var mask = document.createElement('div');
+        mask.className = 'group-mask ' + colorClass;
+        mask.style.left = groupPositions[groupIndex].left;
+        mask.style.width = groupPositions[groupIndex].width;
+        return mask;
+    }
+
+    // 创建大键盘整体遮罩
+    function createFullPianoMask() {
+        var mask = document.createElement('div');
+        mask.className = 'full-piano-mask mask-yellow';
+        return mask;
+    }
+
+    // 清除所有遮罩
+    function clearMasks() {
+        maskContainer.innerHTML = '';
+    }
+
+    // 显示提示（使用现有tips区域）
+    function showMessage(message, type) {
+        wrong.style.display = type === 'wrong' ? '' : 'none';
+        right.style.display = type === 'right' ? '' : 'none';
+        tips.className = '';
+        answer.innerHTML = message;
+        setTimeout(function() {
+            tips.className = 'easeout';
+        }, 10);
+    }
 
     // 大键盘组点击事件
     var octaveGroups = document.querySelectorAll('.octave-group');
     octaveGroups.forEach(function(group) {
         group.addEventListener('click', function() {
-            var groupNum = this.getAttribute('data-group');
-            var noteRange = this.getAttribute('data-note');
-            alert('点击了第 ' + groupNum + ' 组 (' + noteRange + ')');
+            var groupNum = parseInt(this.getAttribute('data-group'));
+            var correctGroup = getNoteGroup(note.className);
+
+            if (groupNum === correctGroup) {
+                // 情况1：选择了正确的组
+                selectedGroup = groupNum;
+                clearMasks();
+                maskContainer.appendChild(createMask(groupNum, 'mask-gray'));
+            } else {
+                // 情况2：选择了错误的组
+                // 用户点击的组无效果，正确组显示浅红色遮罩1秒后消失
+                var correctMask = createMask(correctGroup, 'mask-red');
+                maskContainer.appendChild(correctMask);
+                setTimeout(function() {
+                    if (correctMask.parentNode === maskContainer) {
+                        maskContainer.removeChild(correctMask);
+                    }
+                }, 1000);
+            }
         });
     });
+
+    // 小键盘点击事件 - 重写
+    var fun6 = function(event) {
+        event.preventDefault();
+        var target = event.target;
+        var key = note.className.slice(-1);
+        if(target.nodeName === "SPAN") {
+            target = target.parentNode;
+        }
+        target.className = target.className.replace("pressDown", "pressUp");
+
+        // 情况3：未选择组直接点小键盘
+        if (selectedGroup === null) {
+            // 显示大键盘黄色遮罩
+            clearMasks();
+            maskContainer.appendChild(createFullPianoMask());
+            showMessage('请先选择音组', 'wrong');
+            // 2秒后清除遮罩
+            setTimeout(function() {
+                clearMasks();
+            }, 2000);
+            return;
+        }
+
+        var correctGroup = getNoteGroup(note.className);
+        var clickedKey = target.className.split(/[^^]key/)[1][0];
+
+        // 检查是否选择了正确的组
+        if (selectedGroup !== correctGroup) {
+            // 组错了，但这种情况应该在选组时就处理了
+            showMessage('组错误', 'wrong');
+            return;
+        }
+
+        // 情况4：组正确，检查音
+        if (clickedKey === key) {
+            // 答对了
+            wrong.style.display = "none";
+            right.style.display = "";
+            tips.className = "";
+            answer.innerHTML = key + "/" + noteToSolfege[key];
+            setTimeout(function() {
+                tips.className = "easeout";
+            }, 10);
+            // 清除选中状态，准备下一题
+            selectedGroup = null;
+            clearMasks();
+            randomizeNote();
+        } else {
+            // 情况4：组对但音错了
+            wrong.style.display = "";
+            right.style.display = "none";
+            tips.className = "";
+            answer.innerHTML = key + "/" + noteToSolfege[key];
+            setTimeout(function() {
+                tips.className = "easeout";
+            }, 10);
+        }
+    };
+
+    // 移除旧的事件监听器并重新添加
+    painoDown.removeEventListener("touchend", fun6);
+    painoDown.removeEventListener("mouseup", fun6);
+    painoDown.addEventListener("touchend", fun6);
+    painoDown.addEventListener("mouseup", fun6);
+
+    randomizeNote();
 </script>
 </html>
