@@ -139,7 +139,7 @@
             opacity: 0;
         }
         .easeout{
-            -webkit-animation:easeout 2.25s;
+            -webkit-animation:easeout 2.75s;
             -webkit-animation-fill-mode:forwards;
         }
         @-webkit-keyframes easeout{
@@ -344,20 +344,11 @@
         /* 浅红色遮罩 - 错误提示 */
         .mask-red {
             background-color: rgba(255, 100, 100, 0.4);
-            animation: flash-twice 0.5s ease-in-out;
-        }
-
-        @keyframes flash-twice {
-            0%, 100% { opacity: 0; }
-            25% { opacity: 1; }
-            50% { opacity: 0; }
-            75% { opacity: 1; }
         }
 
         /* 浅黄色遮罩 - 警告提示 */
         .mask-yellow {
             background-color: rgba(255, 255, 100, 0.4);
-            animation: flash-twice 0.5s ease-in-out;
         }
 
         /* 大键盘整体遮罩 */
