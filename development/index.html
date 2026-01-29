@@ -462,6 +462,10 @@
             <img src="https://raw.githubusercontent.com/QS20199/paino/master/wrong.gif" id="wrong"/>
             <span id="answer">C</span>
         </div>
+        <!-- DEBUG: 显示当前音符 -->
+        <div id="debug-note" style="margin-top: 10px; padding: 5px; background-color: #f0f0f0; font-family: monospace; font-size: 12px; color: #333;">
+            [DEBUG] 当前音符: <span id="debug-note-name">-</span> | 音组: <span id="debug-group">-</span>
+        </div>
     </div>
 </body>
 <script>
@@ -638,6 +642,12 @@
         gameState.selectedGroup = null;
         clearMasks();
         console.log('New question:', note.className, 'Group:', correctGroup);
+
+        // DEBUG: 更新调试显示
+        var debugNoteName = document.getElementById('debug-note-name');
+        var debugGroup = document.getElementById('debug-group');
+        if (debugNoteName) debugNoteName.textContent = note.className;
+        if (debugGroup) debugGroup.textContent = correctGroup;
     }
 
     // 大键盘组点击处理
