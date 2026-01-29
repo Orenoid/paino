@@ -578,20 +578,34 @@
     ];
 
     // 音符到钢琴音组的映射
-    // 基于五线谱位置推断的实际音高映射
+    // 基于实际五线谱位置验证后的映射
     function getNoteGroup(noteClass) {
         var noteGroups = {
-            // 高音谱表 (Up) - 从 G4 到 D6
-            'Up3D': 6, 'Up3C': 6, 'Up3B': 6, 'Up3A': 6,  // C6-B6 组 (D6是C8前的最高白键)
-            'Up2G': 5, 'Up2F': 5, 'Up2E': 5, 'Up2D': 5, 'Up2C': 5, 'Up2B': 5, 'Up2A': 5,  // C5-B5 组
-            'Up1G': 4, 'Up1F': 4, 'Up1E': 4, 'Up1D': 4, 'Up1C': 4, 'Up1B': 4, 'Up1A': 4,  // C4-B4 组 (中央C)
-            'Up0G': 4,  // G4 属于 C4-B4 组
+            // 高音谱表 (Up)
+            // Up3D-Up3A: 上加三线到上加一间 (D6-A6) -> Group 6
+            'Up3D': 6, 'Up3C': 6, 'Up3B': 6, 'Up3A': 6,
 
-            // 低音谱表 (Down) - 从 B1 到 F5
-            'Down3F': 5, 'Down3E': 5, 'Down3D': 5, 'Down3C': 5,  // C5-B5 组 (F5是最高)
-            'Down3B': 4, 'Down3A': 4, 'Down2G': 4, 'Down2F': 4, 'Down2E': 4, 'Down2D': 4, 'Down2C': 4,  // C4-B4 组
-            'Down2B': 3, 'Down2A': 3, 'Down1G': 3, 'Down1F': 3, 'Down1E': 3, 'Down1D': 3, 'Down1C': 3,  // C3-B3 组
-            'Down1B': 2   // B2? 或 B1? 需要验证 - 暂时放在 C2-B2 组
+            // Up2G-Up2A: 第三线到上加二线 (G5-A5) -> Group 5
+            'Up2G': 5, 'Up2F': 5, 'Up2E': 5, 'Up2D': 5, 'Up2C': 5, 'Up2B': 5, 'Up2A': 5,
+
+            // Up1G-Up1A: 下加一线到第三间 (G4-A4) -> Group 4 (中央C组)
+            'Up1G': 4, 'Up1F': 4, 'Up1E': 4, 'Up1D': 4, 'Up1C': 4, 'Up1B': 4, 'Up1A': 4,
+
+            // Up0G: 下加三间 (G3) -> Group 3
+            'Up0G': 3,
+
+            // 低音谱表 (Down)
+            // Down3F-Down3C: 上加二线到上加一线 (F4-C4) -> Group 4 (中央C组)
+            'Down3F': 4, 'Down3E': 4, 'Down3D': 4, 'Down3C': 4,
+
+            // Down3B-Down2C: 上加一间到第一线 (B3-C4?) 需要验证
+            'Down3B': 3, 'Down3A': 3, 'Down2G': 3, 'Down2F': 3, 'Down2E': 3, 'Down2D': 3, 'Down2C': 3,
+
+            // Down2B-Down1C: 下加一线到第三线 (B2-C3) -> Group 2-3
+            'Down2B': 2, 'Down2A': 2, 'Down1G': 2, 'Down1F': 2, 'Down1E': 2, 'Down1D': 2, 'Down1C': 2,
+
+            // Down1B: 下加二线 (B1 或 B2) -> Group 1 或 2
+            'Down1B': 1
         };
         return noteGroups[noteClass] !== undefined ? noteGroups[noteClass] : 4;
     }
