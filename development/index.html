@@ -416,7 +416,7 @@
             content: '';
             position: absolute;
             top: -12px;
-            left: 50%;
+            left: var(--triangle-left, 50%);
             transform: translateX(-50%);
             width: 0;
             height: 0;
@@ -430,7 +430,7 @@
             content: '';
             position: absolute;
             top: -9px;
-            left: 50%;
+            left: var(--triangle-left, 50%);
             transform: translateX(-50%);
             width: 0;
             height: 0;
@@ -727,17 +727,35 @@
         var groupWidthPercent = parseFloat(groupPos.width);
         var groupCenterPercent = groupLeftPercent + groupWidthPercent / 2;
 
-        // 弹出框宽度固定为280px，计算位置使其居中于音组
+        // 弹出框宽度固定为280px
         var popupWidth = 280;
         var containerWidth = containerRect.width;
         var centerX = (groupCenterPercent / 100) * containerWidth;
+
+        // 计算小三角位置（相对于弹出框的百分比）
+        // 默认弹出框居中于音组，小三角在50%
+        var trianglePercent = 50;
         var popupLeft = centerX - popupWidth / 2;
 
         // 边界检查：确保弹出框不超出容器
-        if (popupLeft < 10) popupLeft = 10;
-        if (popupLeft + popupWidth > containerWidth - 10) {
-            popupLeft = containerWidth - popupWidth - 10;
+        var minLeft = 10;
+        var maxLeft = containerWidth - popupWidth - 10;
+
+        if (popupLeft < minLeft) {
+            // 弹出框靠左边缘，小三角位置需要调整
+            popupLeft = minLeft;
+            // 计算小三角相对于弹出框的位置
+            var triangleX = centerX - popupLeft;
+            trianglePercent = (triangleX / popupWidth) * 100;
+        } else if (popupLeft > maxLeft) {
+            // 弹出框靠右边缘，小三角位置需要调整
+            popupLeft = maxLeft;
+            var triangleX = centerX - popupLeft;
+            trianglePercent = (triangleX / popupWidth) * 100;
         }
+
+        // 设置小三角位置（CSS变量）
+        pianoPopup.style.setProperty('--triangle-left', trianglePercent + '%');
 
         // 设置弹出框位置（在大键盘下方，靠近一点）
         pianoPopup.style.left = popupLeft + 'px';
