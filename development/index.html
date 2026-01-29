@@ -582,33 +582,31 @@
     ];
 
     // 音符到组的映射（根据五线谱位置判断）
-    // 所有映射值减1，修复"高一个组"的问题
     function getNoteGroup(noteClass) {
-        // 根据音符类名返回对应的组号
         // 组定义: 0=A0-B0, 1=C1-B1, 2=C2-B2, 3=C3-B3, 4=C4-B4(中央C), 5=C5-B5, 6=C6-B6, 7=C7-B7, 8=C8
+        // 钢琴音组: 大字组(0), 大字一组(1), 大字二组(2), 小字组(3), 小字一组(4), 小字二组(5), 小字三组(6), 小字四组(7), C8(8)
         var noteGroups = {
-            // 高音谱表 - 从低到高
-            // 小字一组 (C4-B4) - 组4
-            'Up0G': 3, 'Up1A': 3, 'Up1B': 3,
-            // 小字二组 (C5-B5) - 组5
-            'Up1C': 4, 'Up1D': 4, 'Up1E': 4, 'Up1F': 4, 'Up1G': 4, 'Up2A': 4, 'Up2B': 4,
+            // ===== 高音谱表 =====
+            // 小字四组 (C7-B7) - 组7
+            'Up3D': 7, 'Up3C': 7, 'Up3B': 7, 'Up3A': 7,
             // 小字三组 (C6-B6) - 组6
-            'Up2C': 5, 'Up2D': 5, 'Up2E': 5, 'Up2F': 5, 'Up2G': 5, 'Up3A': 5, 'Up3B': 5,
-            // 小字四组 (C7-C8) - 组7-8
-            'Up3C': 6, 'Up3D': 7,
-            // 低音谱表 - 从低到高
-            // 大字组 (A0-B0) - 组0
-            'Down1B': -1,
-            // 大字一组 (C1-B1) - 组1
-            'Down1C': 0, 'Down1D': 0, 'Down1E': 0, 'Down1F': 0, 'Down1G': 0, 'Down2A': 0, 'Down2B': 0,
+            'Up2G': 6, 'Up2F': 6, 'Up2E': 6, 'Up2D': 6, 'Up2C': 6, 'Up2B': 6, 'Up2A': 6,
+            // 小字二组 (C5-B5) - 组5
+            'Up1G': 5, 'Up1F': 5, 'Up1E': 5, 'Up1D': 5, 'Up1C': 5, 'Up1B': 5, 'Up1A': 5,
+            // 小字一组 (C4-B4) - 组4
+            'Up0G': 4,
+
+            // ===== 低音谱表 =====
+            // 小字一组 (C4-B4) - 组4
+            'Down3F': 4, 'Down3E': 4, 'Down3D': 4, 'Down3C': 4,
+            // 小字组 (C3-B3) - 组3
+            'Down3B': 3, 'Down3A': 3, 'Down2G': 3, 'Down2F': 3, 'Down2E': 3, 'Down2D': 3, 'Down2C': 3,
             // 大字二组 (C2-B2) - 组2
-            'Down2C': 1, 'Down2D': 1, 'Down2E': 1, 'Down2F': 1, 'Down2G': 1, 'Down3A': 1, 'Down3B': 1,
-            // 小字组 (C3-B3) - 组3, 小字一组 (C4) - 组4
-            'Down3C': 2, 'Down3D': 2, 'Down3E': 2, 'Down3F': 3
+            'Down2B': 2, 'Down2A': 2, 'Down1G': 2, 'Down1F': 2, 'Down1E': 2, 'Down1D': 2, 'Down1C': 2,
+            // 大字一组 (C1-B1) - 组1
+            'Down1B': 1
         };
-        var group = noteGroups[noteClass];
-        if (group === -1) return 0; // Down1B 特殊情况
-        return group !== undefined ? group : 3;
+        return noteGroups[noteClass] !== undefined ? noteGroups[noteClass] : 4;
     }
 
     // 创建遮罩
