@@ -96,3 +96,10 @@ git push origin gh-pages
 - 红色遮罩有闪烁动画（0.5s 闪两次），黄色遮罩无闪烁
 - 错误提示显示时间: 2.75 秒
 - 答对后重置延迟: 250ms
+
+### 开发工作流
+
+- `development/` 目录用于开发测试，改动后直接提交推送
+- GitHub Pages 会自动部署 `gh-pages` 分支的最新代码
+- 测试环境预览: `https://piano.orenoid.com/development/`
+- 生产环境: `https://piano.orenoid.com/`
