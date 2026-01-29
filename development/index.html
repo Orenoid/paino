@@ -126,7 +126,7 @@
         #tips{
             position: relative;
             width:100%;
-            height:30px;
+            height:12px;
             /*margin: 20%;*/
         }
         #right,#wrong{
@@ -371,6 +371,12 @@
             z-index: 8;
         }
 
+        /* 大键盘下方的提示区域 */
+        #full-piano + #tips {
+            margin-top: 8px;
+            height: 25px;
+        }
+
         /* 各组位置 - 基于52个白键均分100%宽度 */
         /* A0-B0: 2个白键 */
         .group-0 { left: 0%; width: 3.846%; }
@@ -413,11 +419,6 @@
             </div>
             <!-- <input type="text" id="range"/> -->
         </div>
-        <div id="tips" class="hidden">
-            <img src="https://raw.githubusercontent.com/QS20199/paino/master/right.gif" id="right"/>
-            <img src="https://raw.githubusercontent.com/QS20199/paino/master/wrong.gif" id="wrong"/>
-            <span id="answer">C</span>
-        </div>
         <div id="showArea">
             <img id="stave" src="https://raw.githubusercontent.com/QS20199/paino/gh-pages/stave.gif" alt="stave"/>
             <img id="note" src="https://raw.githubusercontent.com/QS20199/paino/gh-pages/note.gif" alt="note" class=""/>
@@ -455,6 +456,12 @@
             <div class="octave-group group-8" data-group="8" data-note="C8"></div>
             <!-- 遮罩层容器 -->
             <div id="mask-container"></div>
+        </div>
+        <!-- 错误提示移到大键盘下方 -->
+        <div id="tips" class="hidden">
+            <img src="https://raw.githubusercontent.com/QS20199/paino/master/right.gif" id="right"/>
+            <img src="https://raw.githubusercontent.com/QS20199/paino/master/wrong.gif" id="wrong"/>
+            <span id="answer">C</span>
         </div>
     </div>
 </body>
