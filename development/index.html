@@ -171,6 +171,7 @@
             width:100%;
             height: 150px;
             overflow: hidden;
+            display: none; /* 默认隐藏，在弹出框中显示 */
         }
         .keyDown{
             width:13.16%;
@@ -396,6 +397,76 @@
         /* C8: 1个白键 */
         .group-8 { left: 98.073%; width: 1.927%; }
 
+        /* 弹出框样式 - 放大镜效果 */
+        #piano-popup {
+            position: absolute;
+            background: white;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 100;
+            display: none;
+            width: 280px;
+            height: 100px;
+        }
+
+        /* 小三角 */
+        #piano-popup::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 12px solid #333;
+        }
+
+        /* 小三角内部白色（与弹出框背景一致） */
+        #piano-popup::before {
+            content: '';
+            position: absolute;
+            bottom: -9px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+            z-index: 101;
+        }
+
+        /* 弹出框内的小键盘样式 */
+        #popup-piano {
+            position: relative;
+            width: 100%;
+            height: 80px;
+            overflow: hidden;
+        }
+
+        #popup-piano .keyDown {
+            height: 100%;
+        }
+
+        #popup-piano .keyUp {
+            height: 50%;
+            bottom: 50%;
+        }
+
+        #popup-piano .keyDownName {
+            font-size: 14px;
+            bottom: 5px;
+        }
+
+        #popup-piano .keySolfegeName {
+            font-size: 12px;
+            bottom: 25px;
+        }
+
     </style>
 </head>
 <body>
@@ -456,6 +527,27 @@
             <!-- 遮罩层容器 -->
             <div id="mask-container"></div>
         </div>
+        <!-- 弹出框 - 用于显示小键盘 -->
+        <div id="piano-popup">
+            <div id="popup-piano">
+                <div id="popup-normal">
+                    <div class="keyDown keyC"><span class="keySolfegeName">Do</span><span class="keyDownName">C</span></div>
+                    <div class="keyDown keyD"><span class="keySolfegeName">Re</span><span class="keyDownName">D</span></div>
+                    <div class="keyDown keyE"><span class="keySolfegeName">Mi</span><span class="keyDownName">E</span></div>
+                    <div class="keyDown keyF"><span class="keySolfegeName">Fa</span><span class="keyDownName">F</span></div>
+                    <div class="keyDown keyG"><span class="keySolfegeName">Sol</span><span class="keyDownName">G</span></div>
+                    <div class="keyDown keyA"><span class="keySolfegeName">La</span><span class="keyDownName">A</span></div>
+                    <div class="keyDown keyB"><span class="keySolfegeName">Si</span><span class="keyDownName">B</span></div>
+                </div>
+                <div id="popup-higher">
+                    <div class="keyUp keyUpC"><span class="keyUpName"></span></div>
+                    <div class="keyUp keyUpD"><span class="keyUpName"></span></div>
+                    <div class="keyUp keyUpF"><span class="keyUpName"></span></div>
+                    <div class="keyUp keyUpG"><span class="keyUpName"></span></div>
+                    <div class="keyUp keyUpA"><span class="keyUpName"></span></div>
+                </div>
+            </div>
+        </div>
         <!-- 错误提示移到大键盘下方 -->
         <div id="tips" class="hidden">
             <img src="../right.gif" id="right"/>
@@ -472,6 +564,9 @@
     var note = document.getElementById("note");
     var keyNames = document.querySelectorAll(".keyDownName, .keySolfegeName");
     var painoDown = document.getElementById("normal");
+    var popupPiano = document.getElementById("popup-normal");
+    var pianoPopup = document.getElementById("piano-popup");
+    var fullPiano = document.getElementById("full-piano");
     var show = true;
     var mode = changeMode.value;
     var right = document.getElementById("right");
@@ -621,6 +716,40 @@
         maskContainer.innerHTML = '';
     }
 
+    // 显示弹出框在指定音组上方
+    function showPopup(groupIndex) {
+        var groupPos = groupPositions[groupIndex];
+        var fullPianoRect = fullPiano.getBoundingClientRect();
+        var containerRect = document.querySelector('.container').getBoundingClientRect();
+
+        // 计算音组中心位置（相对于容器）
+        var groupLeftPercent = parseFloat(groupPos.left);
+        var groupWidthPercent = parseFloat(groupPos.width);
+        var groupCenterPercent = groupLeftPercent + groupWidthPercent / 2;
+
+        // 弹出框宽度固定为280px，计算位置使其居中于音组
+        var popupWidth = 280;
+        var containerWidth = containerRect.width;
+        var centerX = (groupCenterPercent / 100) * containerWidth;
+        var popupLeft = centerX - popupWidth / 2;
+
+        // 边界检查：确保弹出框不超出容器
+        if (popupLeft < 10) popupLeft = 10;
+        if (popupLeft + popupWidth > containerWidth - 10) {
+            popupLeft = containerWidth - popupWidth - 10;
+        }
+
+        // 设置弹出框位置（在大键盘上方）
+        pianoPopup.style.left = popupLeft + 'px';
+        pianoPopup.style.bottom = (fullPianoRect.height + 10) + 'px';
+        pianoPopup.style.display = 'block';
+    }
+
+    // 隐藏弹出框
+    function hidePopup() {
+        pianoPopup.style.display = 'none';
+    }
+
     function showMessage(message, type) {
         wrong.style.display = type === 'wrong' ? '' : 'none';
         right.style.display = type === 'right' ? '' : 'none';
@@ -637,6 +766,7 @@
         gameState.selectedGroup = null;
         gameState.correctGroup = null;
         clearMasks();
+        hidePopup();
     }
 
     // 初始化新题目
@@ -664,6 +794,8 @@
                     gameState.status = State.GROUP_SELECTED;
                     gameState.selectedGroup = groupNum;
                     maskContainer.appendChild(createMask(groupNum, 'mask-gray'));
+                    // 显示弹出框
+                    showPopup(groupNum);
                 } else {
                     // IDLE → IDLE: 选择错误组，显示红色提示
                     console.log('Wrong group, showing red mask on correct group:', gameState.correctGroup);
@@ -676,11 +808,20 @@
                     }, 1000);
                 }
             }
-            // GROUP_SELECTED 状态下点击其他组：忽略
+            // GROUP_SELECTED 状态下点击其他组：忽略，但允许点击当前选中组来关闭弹出框
+            else if (gameState.status === State.GROUP_SELECTED) {
+                if (groupNum === gameState.selectedGroup) {
+                    // 再次点击已选中的组，关闭弹出框
+                    hidePopup();
+                    gameState.status = State.IDLE;
+                    gameState.selectedGroup = null;
+                    clearMasks();
+                }
+            }
         });
     });
 
-    // 小键盘点击处理
+    // 小键盘点击处理（弹出框内）
     var fun6 = function(event) {
         event.preventDefault();
 
@@ -696,13 +837,7 @@
         target.className = target.className.replace("pressDown", "pressUp");
 
         if (gameState.status === State.IDLE) {
-            // 未选组直接点小键盘
-            clearMasks();
-            maskContainer.appendChild(createFullPianoMask());
-            showMessage('请先选择音组', 'wrong');
-            setTimeout(function() {
-                clearMasks();
-            }, 2000);
+            // 未选组直接点小键盘 - 现在这种情况不会发生，因为弹出框未显示
             return;
         }
 
@@ -711,8 +846,9 @@
             var clickedKey = target.className.split(/[^^]key/)[1][0];
 
             if (clickedKey === key) {
-                // 答对：显示正确，然后下一题
+                // 答对：显示正确，关闭弹出框，然后下一题
                 showMessage(key + "/" + noteToSolfege[key], 'right');
+                hidePopup();
                 setTimeout(function() {
                     initNewQuestion();
                 }, 250); // 缩短到250ms
@@ -724,8 +860,12 @@
         }
     };
 
-    painoDown.addEventListener("touchend", fun6);
-    painoDown.addEventListener("mouseup", fun6);
+    // 绑定弹出框内小键盘的事件
+    popupPiano.addEventListener("touchend", fun6);
+    popupPiano.addEventListener("mouseup", fun6);
+    // 保留原小键盘事件（以防需要恢复）
+    painoDown.addEventListener("touchend", fun5);
+    painoDown.addEventListener("mouseup", fun5);
 
     // 初始化第一题
     initNewQuestion();
