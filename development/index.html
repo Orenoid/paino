@@ -686,7 +686,7 @@
                 showMessage(key + "/" + noteToSolfege[key], 'right');
                 setTimeout(function() {
                     initNewQuestion();
-                }, 1500);
+                }, 500); // 缩短到500ms
             } else {
                 // 答错：显示错误，保持当前状态等待再次尝试
                 showMessage(key + "/" + noteToSolfege[key], 'wrong');
