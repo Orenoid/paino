@@ -344,6 +344,14 @@
         /* 浅红色遮罩 - 错误提示 */
         .mask-red {
             background-color: rgba(255, 100, 100, 0.4);
+            animation: flash-twice 0.5s ease-in-out;
+        }
+
+        @keyframes flash-twice {
+            0%, 100% { opacity: 0; }
+            25% { opacity: 1; }
+            50% { opacity: 0; }
+            75% { opacity: 1; }
         }
 
         /* 浅黄色遮罩 - 警告提示 */
@@ -686,7 +694,7 @@
                 showMessage(key + "/" + noteToSolfege[key], 'right');
                 setTimeout(function() {
                     initNewQuestion();
-                }, 500); // 缩短到500ms
+                }, 250); // 缩短到250ms
             } else {
                 // 答错：显示错误，保持当前状态等待再次尝试
                 showMessage(key + "/" + noteToSolfege[key], 'wrong');
