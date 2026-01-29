@@ -646,8 +646,12 @@
     // 初始化新题目
     function initNewQuestion() {
         randomizeNote();
-        gameState.correctGroup = getNoteGroup(note.className);
-        resetGame();
+        var correctGroup = getNoteGroup(note.className);
+        gameState.correctGroup = correctGroup;
+        gameState.status = State.IDLE;
+        gameState.selectedGroup = null;
+        clearMasks();
+        console.log('New question:', note.className, 'Group:', correctGroup);
     }
 
     // 大键盘组点击处理
@@ -655,15 +659,18 @@
     octaveGroups.forEach(function(group) {
         group.addEventListener('click', function() {
             var groupNum = parseInt(this.getAttribute('data-group'));
+            console.log('Group clicked:', groupNum, 'Current state:', gameState.status, 'Correct group:', gameState.correctGroup);
 
             if (gameState.status === State.IDLE) {
                 if (groupNum === gameState.correctGroup) {
                     // IDLE → GROUP_SELECTED: 选择正确组
+                    console.log('Correct group selected!');
                     gameState.status = State.GROUP_SELECTED;
                     gameState.selectedGroup = groupNum;
                     maskContainer.appendChild(createMask(groupNum, 'mask-gray'));
                 } else {
                     // IDLE → IDLE: 选择错误组，显示红色提示
+                    console.log('Wrong group, showing red mask on correct group:', gameState.correctGroup);
                     var correctMask = createMask(gameState.correctGroup, 'mask-red');
                     maskContainer.appendChild(correctMask);
                     setTimeout(function() {
