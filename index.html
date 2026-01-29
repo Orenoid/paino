@@ -126,20 +126,20 @@
         #tips{
             position: relative;
             width:100%;
-            height:30px;
+            height:12px;
             /*margin: 20%;*/
         }
         #right,#wrong{
             position: absolute;
             width:15px;
             top:10px;
-            left:40%;
+            left:45%;
         }
         .hidden{
             opacity: 0;
         }
         .easeout{
-            -webkit-animation:easeout 1.5s;
+            -webkit-animation:easeout 2.75s;
             -webkit-animation-fill-mode:forwards;
         }
         @-webkit-keyframes easeout{
@@ -148,7 +148,7 @@
         }
         #answer{
             position: absolute;
-            left:60%;
+            left:55%;
             top:9px;
         }
         #showArea{
@@ -166,11 +166,10 @@
             -webkit-transition:0.2s;
         }
         #paino{
-            position: absolute;
+            position: relative;
             border-top: 1px solid gray;
-            top: 70%;
-            bottom: 0;
             width:100%;
+            height: 150px;
             overflow: hidden;
         }
         .keyDown{
@@ -300,6 +299,103 @@
             100% {background-color: #ffffff;}
         }
 
+        /* 大键盘样式 - 88键 SVG */
+        #full-piano {
+            position: relative;
+            width: 100%;
+            height: auto;
+            margin-top: 10px;
+            border-top: 1px solid gray;
+        }
+
+        #full-piano img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* 可点击组区域 */
+        .octave-group {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .octave-group:hover {
+            background-color: rgba(200, 200, 200, 0.2);
+        }
+
+        /* 组遮罩 - 统一样式，不同颜色 */
+        .group-mask {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* 灰色遮罩 - 正确组选中 */
+        .mask-gray {
+            background-color: rgba(128, 128, 128, 0.4);
+        }
+
+        /* 浅红色遮罩 - 错误提示 */
+        .mask-red {
+            background-color: rgba(255, 100, 100, 0.4);
+            animation: flash-twice 0.5s ease-in-out;
+        }
+
+        @keyframes flash-twice {
+            0%, 100% { opacity: 0; }
+            25% { opacity: 1; }
+            50% { opacity: 0; }
+            75% { opacity: 1; }
+        }
+
+        /* 浅黄色遮罩 - 警告提示 */
+        .mask-yellow {
+            background-color: rgba(255, 255, 100, 0.4);
+        }
+
+        /* 大键盘整体遮罩 */
+        .full-piano-mask {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 8;
+        }
+
+        /* 大键盘下方的提示区域 */
+        #full-piano + #tips {
+            margin-top: 8px;
+            height: 25px;
+        }
+
+        /* 各组位置 - 基于52个白键均分100%宽度 */
+        /* A0-B0: 2个白键 */
+        .group-0 { left: 0%; width: 3.846%; }
+        /* C1-B1: 7个白键 */
+        .group-1 { left: 3.846%; width: 13.461%; }
+        /* C2-B2: 7个白键 */
+        .group-2 { left: 17.307%; width: 13.461%; }
+        /* C3-B3: 7个白键 */
+        .group-3 { left: 30.768%; width: 13.461%; }
+        /* C4-B4: 7个白键 (中央C) */
+        .group-4 { left: 44.229%; width: 13.461%; }
+        /* C5-B5: 7个白键 */
+        .group-5 { left: 57.69%; width: 13.461%; }
+        /* C6-B6: 7个白键 */
+        .group-6 { left: 71.151%; width: 13.461%; }
+        /* C7-B7: 7个白键 */
+        .group-7 { left: 84.612%; width: 13.461%; }
+        /* C8: 1个白键 */
+        .group-8 { left: 98.073%; width: 1.927%; }
+
     </style>
 </head>
 <body>
@@ -322,14 +418,9 @@
             </div>
             <!-- <input type="text" id="range"/> -->
         </div>
-        <div id="tips" class="hidden">
-            <img src="https://raw.githubusercontent.com/QS20199/paino/master/right.gif" id="right"/>
-            <img src="https://raw.githubusercontent.com/QS20199/paino/master/wrong.gif" id="wrong"/>
-            <span id="answer">C</span>
-        </div>
         <div id="showArea">
-            <img id="stave" src="https://raw.githubusercontent.com/QS20199/paino/gh-pages/stave.gif" alt="stave"/>
-            <img id="note" src="https://raw.githubusercontent.com/QS20199/paino/gh-pages/note.gif" alt="note" class=""/>
+            <img id="stave" src="stave.gif" alt="stave"/>
+            <img id="note" src="note.gif" alt="note" class=""/>
         </div>
         <div id="paino">
             <div id="normal">
@@ -348,6 +439,28 @@
                 <div class="keyUp keyUpG"><span class="keyUpName"></span></div>
                 <div class="keyUp keyUpA"><span class="keyUpName"></span></div>
             </div>
+        </div>
+        <!-- 88键大键盘 -->
+        <div id="full-piano">
+            <img src="piano-88-keys.svg" alt="88键钢琴键盘">
+            <!-- 可点击组区域 -->
+            <div class="octave-group group-0" data-group="0" data-note="A0-B0"></div>
+            <div class="octave-group group-1" data-group="1" data-note="C1-B1"></div>
+            <div class="octave-group group-2" data-group="2" data-note="C2-B2"></div>
+            <div class="octave-group group-3" data-group="3" data-note="C3-B3"></div>
+            <div class="octave-group group-4" data-group="4" data-note="C4-B4"></div>
+            <div class="octave-group group-5" data-group="5" data-note="C5-B5"></div>
+            <div class="octave-group group-6" data-group="6" data-note="C6-B6"></div>
+            <div class="octave-group group-7" data-group="7" data-note="C7-B7"></div>
+            <div class="octave-group group-8" data-group="8" data-note="C8"></div>
+            <!-- 遮罩层容器 -->
+            <div id="mask-container"></div>
+        </div>
+        <!-- 错误提示移到大键盘下方 -->
+        <div id="tips" class="hidden">
+            <img src="right.gif" id="right"/>
+            <img src="wrong.gif" id="wrong"/>
+            <span id="answer">C</span>
         </div>
     </div>
 </body>
@@ -412,7 +525,7 @@
 
     changeMode.addEventListener("change", function(event) {
         mode = this.value;
-        randomizeNote();
+        initNewQuestion();
     });
 
 
@@ -432,39 +545,189 @@
     painoDown.addEventListener("mousedown", fun5);
 
 
-    var fun6 = function (event) {
+    // ========== 状态机实现 ==========
+    var State = {
+        IDLE: 'IDLE',              // 初始状态，等待选组
+        GROUP_SELECTED: 'GROUP_SELECTED',  // 已选组，等待选琴键
+        ANSWERING: 'ANSWERING'     // 答题中（防止重复触发）
+    };
+
+    var gameState = {
+        status: State.IDLE,
+        selectedGroup: null,
+        correctGroup: null
+    };
+
+    var maskContainer = document.getElementById('mask-container');
+
+    // 组位置配置
+    var groupPositions = [
+        { left: '0%', width: '3.846%' },      // 0: A0-B0
+        { left: '3.846%', width: '13.461%' }, // 1: C1-B1
+        { left: '17.307%', width: '13.461%' },// 2: C2-B2
+        { left: '30.768%', width: '13.461%' },// 3: C3-B3
+        { left: '44.229%', width: '13.461%' },// 4: C4-B4
+        { left: '57.69%', width: '13.461%' }, // 5: C5-B5
+        { left: '71.151%', width: '13.461%' },// 6: C6-B6
+        { left: '84.612%', width: '13.461%' },// 7: C7-B7
+        { left: '98.073%', width: '1.927%' }  // 8: C8
+    ];
+
+    // 音符到钢琴音组的映射
+    // 基于实际五线谱位置验证后的映射
+    // 高音谱表: 下加三间(G3) -> 上加三间(D6)，共19个音
+    // 低音谱表: 下加三间(B1) -> 上加三间(F4)，共19个音
+    function getNoteGroup(noteClass) {
+        var noteGroups = {
+            // ===== 高音谱表 (Up) =====
+            // Group 6: C6, D6
+            'Up3D': 6, 'Up3C': 6,
+            // Group 5: C5, D5, E5, F5, G5, A5, B5
+            'Up3B': 5, 'Up3A': 5, 'Up2G': 5, 'Up2F': 5, 'Up2E': 5, 'Up2D': 5, 'Up2C': 5,
+            // Group 4: C4, D4, E4, F4, G4, A4, B4 (中央C组)
+            'Up2B': 4, 'Up2A': 4, 'Up1G': 4, 'Up1F': 4, 'Up1E': 4, 'Up1D': 4, 'Up1C': 4,
+            // Group 3: A3, B3, C3, D3, E3, F3, G3
+            'Up1B': 3, 'Up1A': 3, 'Up0G': 3,
+
+            // ===== 低音谱表 (Down) =====
+            // Group 4: C4, D4, E4, F4 (中央C组)
+            'Down3F': 4, 'Down3E': 4, 'Down3D': 4, 'Down3C': 4,
+            // Group 3: A3, B3, C3, D3, E3, F3, G3
+            'Down3B': 3, 'Down3A': 3, 'Down2G': 3, 'Down2F': 3, 'Down2E': 3, 'Down2D': 3, 'Down2C': 3,
+            // Group 2: C2, D2, E2, F2, G2, A2, B2
+            'Down2B': 2, 'Down2A': 2, 'Down1G': 2, 'Down1F': 2, 'Down1E': 2, 'Down1D': 2, 'Down1C': 2,
+            // Group 1: B1 (低音谱表最低音)
+            'Down1B': 1
+        };
+        return noteGroups[noteClass] !== undefined ? noteGroups[noteClass] : 4;
+    }
+
+    // 工具函数
+    function createMask(groupIndex, colorClass) {
+        var mask = document.createElement('div');
+        mask.className = 'group-mask ' + colorClass;
+        mask.style.left = groupPositions[groupIndex].left;
+        mask.style.width = groupPositions[groupIndex].width;
+        return mask;
+    }
+
+    function createFullPianoMask() {
+        var mask = document.createElement('div');
+        mask.className = 'full-piano-mask mask-yellow';
+        return mask;
+    }
+
+    function clearMasks() {
+        maskContainer.innerHTML = '';
+    }
+
+    function showMessage(message, type) {
+        wrong.style.display = type === 'wrong' ? '' : 'none';
+        right.style.display = type === 'right' ? '' : 'none';
+        tips.className = '';
+        answer.innerHTML = message;
+        setTimeout(function() {
+            tips.className = 'easeout';
+        }, 10);
+    }
+
+    // 重置游戏状态（用于下一题）
+    function resetGame() {
+        gameState.status = State.IDLE;
+        gameState.selectedGroup = null;
+        gameState.correctGroup = null;
+        clearMasks();
+    }
+
+    // 初始化新题目
+    function initNewQuestion() {
+        randomizeNote();
+        var correctGroup = getNoteGroup(note.className);
+        gameState.correctGroup = correctGroup;
+        gameState.status = State.IDLE;
+        gameState.selectedGroup = null;
+        clearMasks();
+        console.log('New question:', note.className, 'Group:', correctGroup);
+    }
+
+    // 大键盘组点击处理
+    var octaveGroups = document.querySelectorAll('.octave-group');
+    octaveGroups.forEach(function(group) {
+        group.addEventListener('click', function() {
+            var groupNum = parseInt(this.getAttribute('data-group'));
+            console.log('Group clicked:', groupNum, 'Current state:', gameState.status, 'Correct group:', gameState.correctGroup);
+
+            if (gameState.status === State.IDLE) {
+                if (groupNum === gameState.correctGroup) {
+                    // IDLE → GROUP_SELECTED: 选择正确组
+                    console.log('Correct group selected!');
+                    gameState.status = State.GROUP_SELECTED;
+                    gameState.selectedGroup = groupNum;
+                    maskContainer.appendChild(createMask(groupNum, 'mask-gray'));
+                } else {
+                    // IDLE → IDLE: 选择错误组，显示红色提示
+                    console.log('Wrong group, showing red mask on correct group:', gameState.correctGroup);
+                    var correctMask = createMask(gameState.correctGroup, 'mask-red');
+                    maskContainer.appendChild(correctMask);
+                    setTimeout(function() {
+                        if (correctMask.parentNode === maskContainer) {
+                            maskContainer.removeChild(correctMask);
+                        }
+                    }, 1000);
+                }
+            }
+            // GROUP_SELECTED 状态下点击其他组：忽略
+        });
+    });
+
+    // 小键盘点击处理
+    var fun6 = function(event) {
         event.preventDefault();
+
+        if (gameState.status === State.ANSWERING) {
+            return; // 防止重复点击
+        }
+
         var target = event.target;
         var key = note.className.slice(-1);
-        if(target.nodeName==="SPAN"){
+        if (target.nodeName === "SPAN") {
             target = target.parentNode;
         }
-        target.className=target.className.replace("pressDown","pressUp");
-        if(target.className.split(/[^^]key/)[1][0]===note.className.slice(-1)){
-            //right
-            randomizeNote();
+        target.className = target.className.replace("pressDown", "pressUp");
 
-            wrong.style.display="none";
-            right.style.display="";
-            tips.className="";
-            answer.innerHTML=key + "/" + noteToSolfege[key];
-            setTimeout(function(){
-                tips.className="easeout";
-            },10);
-        }else{
-            //wrong
-            wrong.style.display="";
-            right.style.display="none";
-            tips.className="";
-            answer.innerHTML=key + "/" + noteToSolfege[key];
-            setTimeout(function(){
-                tips.className="easeout";
-            },10);
+        if (gameState.status === State.IDLE) {
+            // 未选组直接点小键盘
+            clearMasks();
+            maskContainer.appendChild(createFullPianoMask());
+            showMessage('请先选择音组', 'wrong');
+            setTimeout(function() {
+                clearMasks();
+            }, 2000);
+            return;
+        }
+
+        if (gameState.status === State.GROUP_SELECTED) {
+            gameState.status = State.ANSWERING;
+            var clickedKey = target.className.split(/[^^]key/)[1][0];
+
+            if (clickedKey === key) {
+                // 答对：显示正确，然后下一题
+                showMessage(key + "/" + noteToSolfege[key], 'right');
+                setTimeout(function() {
+                    initNewQuestion();
+                }, 250); // 缩短到250ms
+            } else {
+                // 答错：显示错误，保持当前状态等待再次尝试
+                showMessage(key + "/" + noteToSolfege[key], 'wrong');
+                gameState.status = State.GROUP_SELECTED; // 恢复状态，允许再次尝试
+            }
         }
     };
+
     painoDown.addEventListener("touchend", fun6);
     painoDown.addEventListener("mouseup", fun6);
 
-    randomizeNote();
+    // 初始化第一题
+    initNewQuestion();
 </script>
 </html>
