@@ -530,39 +530,6 @@
     painoDown.addEventListener("mousedown", fun5);
 
 
-    var fun6 = function (event) {
-        event.preventDefault();
-        var target = event.target;
-        var key = note.className.slice(-1);
-        if(target.nodeName==="SPAN"){
-            target = target.parentNode;
-        }
-        target.className=target.className.replace("pressDown","pressUp");
-        if(target.className.split(/[^^]key/)[1][0]===note.className.slice(-1)){
-            //right
-            randomizeNote();
-
-            wrong.style.display="none";
-            right.style.display="";
-            tips.className="";
-            answer.innerHTML=key + "/" + noteToSolfege[key];
-            setTimeout(function(){
-                tips.className="easeout";
-            },10);
-        }else{
-            //wrong
-            wrong.style.display="";
-            right.style.display="none";
-            tips.className="";
-            answer.innerHTML=key + "/" + noteToSolfege[key];
-            setTimeout(function(){
-                tips.className="easeout";
-            },10);
-        }
-    };
-    painoDown.addEventListener("touchend", fun6);
-    painoDown.addEventListener("mouseup", fun6);
-
     // ========== 状态机实现 ==========
     var State = {
         IDLE: 'IDLE',              // 初始状态，等待选组
