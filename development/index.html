@@ -827,7 +827,7 @@
                 magnifierHighlight.className = 'magnifier-key-highlight ' + key.type;
                 magnifierHighlight.style.left = relativeLeft + '%';
                 magnifierHighlight.style.width = relativeWidth + '%';
-                magnifierHighlight.style.top = '0';
+                // 不设置 top，让 CSS 类中的 top 值生效
                 magnifierMaskContainer.appendChild(magnifierHighlight);
             }
         }
