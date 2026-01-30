@@ -315,60 +315,13 @@
             display: block;
         }
 
-        /* 可点击组区域 */
-        .octave-group {
+        /* 选中键的高亮遮罩 */
+        .key-highlight-mask {
             position: absolute;
-            top: 0;
-            height: 100%;
-            cursor: pointer;
-            z-index: 10;
-        }
-
-        .octave-group:hover {
-            background-color: rgba(200, 200, 200, 0.2);
-        }
-
-        /* 组遮罩 - 统一样式，不同颜色 */
-        .group-mask {
-            position: absolute;
-            top: 0;
-            height: 100%;
+            background-color: rgba(255, 255, 150, 0.6);
             pointer-events: none;
-            z-index: 5;
-        }
-
-        /* 灰色遮罩 - 正确组选中 */
-        .mask-gray {
-            background-color: rgba(128, 128, 128, 0.4);
-        }
-
-        /* 浅红色遮罩 - 错误提示 */
-        .mask-red {
-            background-color: rgba(255, 100, 100, 0.4);
-            animation: flash-twice 0.5s ease-in-out;
-        }
-
-        @keyframes flash-twice {
-            0%, 100% { opacity: 0; }
-            25% { opacity: 1; }
-            50% { opacity: 0; }
-            75% { opacity: 1; }
-        }
-
-        /* 浅黄色遮罩 - 警告提示 */
-        .mask-yellow {
-            background-color: rgba(255, 255, 100, 0.4);
-        }
-
-        /* 大键盘整体遮罩 */
-        .full-piano-mask {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 8;
+            z-index: 15;
+            border-radius: 2px;
         }
 
         /* 大键盘下方的提示区域 */
@@ -377,94 +330,52 @@
             height: 25px;
         }
 
-        /* 各组位置 - 基于52个白键均分100%宽度 */
-        /* A0-B0: 2个白键 */
-        .group-0 { left: 0%; width: 3.846%; }
-        /* C1-B1: 7个白键 */
-        .group-1 { left: 3.846%; width: 13.461%; }
-        /* C2-B2: 7个白键 */
-        .group-2 { left: 17.307%; width: 13.461%; }
-        /* C3-B3: 7个白键 */
-        .group-3 { left: 30.768%; width: 13.461%; }
-        /* C4-B4: 7个白键 (中央C) */
-        .group-4 { left: 44.229%; width: 13.461%; }
-        /* C5-B5: 7个白键 */
-        .group-5 { left: 57.69%; width: 13.461%; }
-        /* C6-B6: 7个白键 */
-        .group-6 { left: 71.151%; width: 13.461%; }
-        /* C7-B7: 7个白键 */
-        .group-7 { left: 84.612%; width: 13.461%; }
-        /* C8: 1个白键 */
-        .group-8 { left: 98.073%; width: 1.927%; }
-
-        /* 弹出框样式 - 放大镜效果 */
-        #piano-popup {
+        /* 放大镜样式 */
+        #magnifier {
             position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #333;
             background: white;
-            border: 2px solid #333;
-            border-radius: 12px;
-            padding: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
             z-index: 100;
             display: none;
-            width: 280px;
-            height: 100px;
+            overflow: hidden;
+            pointer-events: none;
         }
 
-        /* 小三角 - 在弹出框顶部 */
-        #piano-popup::after {
-            content: '';
+        /* 放大镜内的放大键盘 */
+        #magnifier-content {
             position: absolute;
-            top: -12px;
-            left: var(--triangle-left, 50%);
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 12px solid transparent;
-            border-right: 12px solid transparent;
-            border-bottom: 12px solid #333;
+            width: 240px;
+            height: 240px;
+            transform-origin: center center;
         }
 
-        /* 小三角内部白色（与弹出框背景一致） */
-        #piano-popup::before {
-            content: '';
+        #magnifier-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* 放大镜中心指示器 */
+        #magnifier-center {
             position: absolute;
-            top: -9px;
-            left: var(--triangle-left, 50%);
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 10px solid white;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(255, 0, 0, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
             z-index: 101;
         }
 
-        /* 弹出框内的小键盘样式 */
-        #popup-piano {
-            position: relative;
-            width: 100%;
-            height: 80px;
-            overflow: hidden;
-        }
-
-        #popup-piano .keyDown {
-            height: 100%;
-        }
-
-        #popup-piano .keyUp {
-            height: 50%;
-            bottom: 50%;
-        }
-
-        #popup-piano .keyDownName {
-            font-size: 14px;
-            bottom: 5px;
-        }
-
-        #popup-piano .keySolfegeName {
-            font-size: 12px;
-            bottom: 25px;
+        /* 选中键的高亮效果 */
+        .key-selected {
+            background-color: rgba(255, 255, 150, 0.8) !important;
         }
 
     </style>
@@ -513,40 +424,16 @@
         </div>
         <!-- 88键大键盘 -->
         <div id="full-piano">
-            <img src="../piano-88-keys.svg" alt="88键钢琴键盘">
-            <!-- 可点击组区域 -->
-            <div class="octave-group group-0" data-group="0" data-note="A0-B0"></div>
-            <div class="octave-group group-1" data-group="1" data-note="C1-B1"></div>
-            <div class="octave-group group-2" data-group="2" data-note="C2-B2"></div>
-            <div class="octave-group group-3" data-group="3" data-note="C3-B3"></div>
-            <div class="octave-group group-4" data-group="4" data-note="C4-B4"></div>
-            <div class="octave-group group-5" data-group="5" data-note="C5-B5"></div>
-            <div class="octave-group group-6" data-group="6" data-note="C6-B6"></div>
-            <div class="octave-group group-7" data-group="7" data-note="C7-B7"></div>
-            <div class="octave-group group-8" data-group="8" data-note="C8"></div>
+            <img src="../piano-88-keys.svg" alt="88键钢琴键盘" id="piano-img">
             <!-- 遮罩层容器 -->
             <div id="mask-container"></div>
         </div>
-        <!-- 弹出框 - 用于显示小键盘 -->
-        <div id="piano-popup">
-            <div id="popup-piano">
-                <div id="popup-normal">
-                    <div class="keyDown keyC"><span class="keySolfegeName">Do</span><span class="keyDownName">C</span></div>
-                    <div class="keyDown keyD"><span class="keySolfegeName">Re</span><span class="keyDownName">D</span></div>
-                    <div class="keyDown keyE"><span class="keySolfegeName">Mi</span><span class="keyDownName">E</span></div>
-                    <div class="keyDown keyF"><span class="keySolfegeName">Fa</span><span class="keyDownName">F</span></div>
-                    <div class="keyDown keyG"><span class="keySolfegeName">Sol</span><span class="keyDownName">G</span></div>
-                    <div class="keyDown keyA"><span class="keySolfegeName">La</span><span class="keyDownName">A</span></div>
-                    <div class="keyDown keyB"><span class="keySolfegeName">Si</span><span class="keyDownName">B</span></div>
-                </div>
-                <div id="popup-higher">
-                    <div class="keyUp keyUpC"><span class="keyUpName"></span></div>
-                    <div class="keyUp keyUpD"><span class="keyUpName"></span></div>
-                    <div class="keyUp keyUpF"><span class="keyUpName"></span></div>
-                    <div class="keyUp keyUpG"><span class="keyUpName"></span></div>
-                    <div class="keyUp keyUpA"><span class="keyUpName"></span></div>
-                </div>
+        <!-- 放大镜 -->
+        <div id="magnifier">
+            <div id="magnifier-content">
+                <img src="../piano-88-keys.svg" alt="放大键盘">
             </div>
+            <div id="magnifier-center"></div>
         </div>
         <!-- 错误提示移到大键盘下方 -->
         <div id="tips" class="hidden">
@@ -564,16 +451,17 @@
     var note = document.getElementById("note");
     var keyNames = document.querySelectorAll(".keyDownName, .keySolfegeName");
     var painoDown = document.getElementById("normal");
-    var popupPiano = document.getElementById("popup-normal");
-    var pianoPopup = document.getElementById("piano-popup");
     var fullPiano = document.getElementById("full-piano");
+    var pianoImg = document.getElementById("piano-img");
+    var magnifier = document.getElementById("magnifier");
+    var magnifierContent = document.getElementById("magnifier-content");
     var show = true;
     var mode = changeMode.value;
     var right = document.getElementById("right");
     var wrong = document.getElementById("wrong");
     var tips = document.getElementById("tips");
     var answer = document.getElementById("answer");
-    //var range = document.getElementById("range");
+    var maskContainer = document.getElementById("mask-container");
 
     function randomizeNote() {
         var shangxian = 19;
@@ -655,117 +543,234 @@
 
     var maskContainer = document.getElementById('mask-container');
 
-    // 组位置配置
-    var groupPositions = [
-        { left: '0%', width: '3.846%' },      // 0: A0-B0
-        { left: '3.846%', width: '13.461%' }, // 1: C1-B1
-        { left: '17.307%', width: '13.461%' },// 2: C2-B2
-        { left: '30.768%', width: '13.461%' },// 3: C3-B3
-        { left: '44.229%', width: '13.461%' },// 4: C4-B4
-        { left: '57.69%', width: '13.461%' }, // 5: C5-B5
-        { left: '71.151%', width: '13.461%' },// 6: C6-B6
-        { left: '84.612%', width: '13.461%' },// 7: C7-B7
-        { left: '98.073%', width: '1.927%' }  // 8: C8
+    // ========== 长按放大镜功能 ==========
+    var longPressTimer = null;
+    var isLongPress = false;
+    var isMagnifierVisible = false;
+    var magnifierScale = 2.5; // 放大倍数
+    var magnifierOffset = { x: 0, y: -140 }; // 放大镜相对于触摸位置的偏移（上方）
+    var currentTouchPos = { x: 0, y: 0 };
+    var selectedKeyElement = null;
+
+    // 88键钢琴的键位信息（基于白键百分比位置）
+    // 白键共52个，黑键36个
+    var pianoKeys = [
+        // A0-B0 (Group 0)
+        { note: 'A0', type: 'white', left: 0, width: 1.923 },
+        { note: 'A#0', type: 'black', left: 1.25, width: 1.2 },
+        { note: 'B0', type: 'white', left: 1.923, width: 1.923 },
+        // C1-B1 (Group 1)
+        { note: 'C1', type: 'white', left: 3.846, width: 1.923 },
+        { note: 'C#1', type: 'black', left: 4.6, width: 1.2 },
+        { note: 'D1', type: 'white', left: 5.769, width: 1.923 },
+        { note: 'D#1', type: 'black', left: 6.9, width: 1.2 },
+        { note: 'E1', type: 'white', left: 7.692, width: 1.923 },
+        { note: 'F1', type: 'white', left: 9.615, width: 1.923 },
+        { note: 'F#1', type: 'black', left: 10.5, width: 1.2 },
+        { note: 'G1', type: 'white', left: 11.538, width: 1.923 },
+        { note: 'G#1', type: 'black', left: 12.6, width: 1.2 },
+        { note: 'A1', type: 'white', left: 13.461, width: 1.923 },
+        { note: 'A#1', type: 'black', left: 14.4, width: 1.2 },
+        { note: 'B1', type: 'white', left: 15.384, width: 1.923 },
+        // C2-B2 (Group 2)
+        { note: 'C2', type: 'white', left: 17.307, width: 1.923 },
+        { note: 'C#2', type: 'black', left: 18.2, width: 1.2 },
+        { note: 'D2', type: 'white', left: 19.23, width: 1.923 },
+        { note: 'D#2', type: 'black', left: 20.2, width: 1.2 },
+        { note: 'E2', type: 'white', left: 21.153, width: 1.923 },
+        { note: 'F2', type: 'white', left: 23.076, width: 1.923 },
+        { note: 'F#2', type: 'black', left: 24, width: 1.2 },
+        { note: 'G2', type: 'white', left: 25, width: 1.923 },
+        { note: 'G#2', type: 'black', left: 26, width: 1.2 },
+        { note: 'A2', type: 'white', left: 26.923, width: 1.923 },
+        { note: 'A#2', type: 'black', left: 27.9, width: 1.2 },
+        { note: 'B2', type: 'white', left: 28.846, width: 1.923 },
+        // C3-B3 (Group 3)
+        { note: 'C3', type: 'white', left: 30.769, width: 1.923 },
+        { note: 'C#3', type: 'black', left: 31.7, width: 1.2 },
+        { note: 'D3', type: 'white', left: 32.692, width: 1.923 },
+        { note: 'D#3', type: 'black', left: 33.7, width: 1.2 },
+        { note: 'E3', type: 'white', left: 34.615, width: 1.923 },
+        { note: 'F3', type: 'white', left: 36.538, width: 1.923 },
+        { note: 'F#3', type: 'black', left: 37.5, width: 1.2 },
+        { note: 'G3', type: 'white', left: 38.461, width: 1.923 },
+        { note: 'G#3', type: 'black', left: 39.4, width: 1.2 },
+        { note: 'A3', type: 'white', left: 40.384, width: 1.923 },
+        { note: 'A#3', type: 'black', left: 41.3, width: 1.2 },
+        { note: 'B3', type: 'white', left: 42.307, width: 1.923 },
+        // C4-B4 (Group 4 - 中央C)
+        { note: 'C4', type: 'white', left: 44.23, width: 1.923 },
+        { note: 'C#4', type: 'black', left: 45.2, width: 1.2 },
+        { note: 'D4', type: 'white', left: 46.153, width: 1.923 },
+        { note: 'D#4', type: 'black', left: 47.1, width: 1.2 },
+        { note: 'E4', type: 'white', left: 48.076, width: 1.923 },
+        { note: 'F4', type: 'white', left: 50, width: 1.923 },
+        { note: 'F#4', type: 'black', left: 51, width: 1.2 },
+        { note: 'G4', type: 'white', left: 51.923, width: 1.923 },
+        { note: 'G#4', type: 'black', left: 52.9, width: 1.2 },
+        { note: 'A4', type: 'white', left: 53.846, width: 1.923 },
+        { note: 'A#4', type: 'black', left: 54.8, width: 1.2 },
+        { note: 'B4', type: 'white', left: 55.769, width: 1.923 },
+        // C5-B5 (Group 5)
+        { note: 'C5', type: 'white', left: 57.692, width: 1.923 },
+        { note: 'C#5', type: 'black', left: 58.7, width: 1.2 },
+        { note: 'D5', type: 'white', left: 59.615, width: 1.923 },
+        { note: 'D#5', type: 'black', left: 60.6, width: 1.2 },
+        { note: 'E5', type: 'white', left: 61.538, width: 1.923 },
+        { note: 'F5', type: 'white', left: 63.461, width: 1.923 },
+        { note: 'F#5', type: 'black', left: 64.4, width: 1.2 },
+        { note: 'G5', type: 'white', left: 65.384, width: 1.923 },
+        { note: 'G#5', type: 'black', left: 66.3, width: 1.2 },
+        { note: 'A5', type: 'white', left: 67.307, width: 1.923 },
+        { note: 'A#5', type: 'black', left: 68.2, width: 1.2 },
+        { note: 'B5', type: 'white', left: 69.23, width: 1.923 },
+        // C6-B6 (Group 6)
+        { note: 'C6', type: 'white', left: 71.153, width: 1.923 },
+        { note: 'C#6', type: 'black', left: 72.1, width: 1.2 },
+        { note: 'D6', type: 'white', left: 73.076, width: 1.923 },
+        { note: 'D#6', type: 'black', left: 74, width: 1.2 },
+        { note: 'E6', type: 'white', left: 75, width: 1.923 },
+        { note: 'F6', type: 'white', left: 76.923, width: 1.923 },
+        { note: 'F#6', type: 'black', left: 77.9, width: 1.2 },
+        { note: 'G6', type: 'white', left: 78.846, width: 1.923 },
+        { note: 'G#6', type: 'black', left: 79.8, width: 1.2 },
+        { note: 'A6', type: 'white', left: 80.769, width: 1.923 },
+        { note: 'A#6', type: 'black', left: 81.7, width: 1.2 },
+        { note: 'B6', type: 'white', left: 82.692, width: 1.923 },
+        // C7-B7 (Group 7)
+        { note: 'C7', type: 'white', left: 84.615, width: 1.923 },
+        { note: 'C#7', type: 'black', left: 85.6, width: 1.2 },
+        { note: 'D7', type: 'white', left: 86.538, width: 1.923 },
+        { note: 'D#7', type: 'black', left: 87.5, width: 1.2 },
+        { note: 'E7', type: 'white', left: 88.461, width: 1.923 },
+        { note: 'F7', type: 'white', left: 90.384, width: 1.923 },
+        { note: 'F#7', type: 'black', left: 91.3, width: 1.2 },
+        { note: 'G7', type: 'white', left: 92.307, width: 1.923 },
+        { note: 'G#7', type: 'black', left: 93.2, width: 1.2 },
+        { note: 'A7', type: 'white', left: 94.23, width: 1.923 },
+        { note: 'A#7', type: 'black', left: 95.1, width: 1.2 },
+        { note: 'B7', type: 'white', left: 96.153, width: 1.923 },
+        // C8 (Group 8)
+        { note: 'C8', type: 'white', left: 98.076, width: 1.923 }
     ];
 
-    // 音符到钢琴音组的映射
-    // 基于实际五线谱位置验证后的映射
-    // 高音谱表: 下加三间(G3) -> 上加三间(D6)，共19个音
-    // 低音谱表: 下加三间(B1) -> 上加三间(F4)，共19个音
-    function getNoteGroup(noteClass) {
-        var noteGroups = {
-            // ===== 高音谱表 (Up) =====
-            // Group 6: C6, D6
-            'Up3D': 6, 'Up3C': 6,
-            // Group 5: C5, D5, E5, F5, G5, A5, B5
-            'Up3B': 5, 'Up3A': 5, 'Up2G': 5, 'Up2F': 5, 'Up2E': 5, 'Up2D': 5, 'Up2C': 5,
-            // Group 4: C4, D4, E4, F4, G4, A4, B4 (中央C组)
-            'Up2B': 4, 'Up2A': 4, 'Up1G': 4, 'Up1F': 4, 'Up1E': 4, 'Up1D': 4, 'Up1C': 4,
-            // Group 3: A3, B3, C3, D3, E3, F3, G3
-            'Up1B': 3, 'Up1A': 3, 'Up0G': 3,
+    // 音符类名到琴键名的映射
+    var noteToKey = {
+        'Up3D': 'D6', 'Up3C': 'C6', 'Up3B': 'B5', 'Up3A': 'A5', 'Up2G': 'G5', 'Up2F': 'F5', 'Up2E': 'E5', 'Up2D': 'D5', 'Up2C': 'C5',
+        'Up2B': 'B4', 'Up2A': 'A4', 'Up1G': 'G4', 'Up1F': 'F4', 'Up1E': 'E4', 'Up1D': 'D4', 'Up1C': 'C4', 'Up1B': 'B3', 'Up1A': 'A3', 'Up0G': 'G3',
+        'Down3F': 'F4', 'Down3E': 'E4', 'Down3D': 'D4', 'Down3C': 'C4', 'Down3B': 'B3', 'Down3A': 'A3', 'Down2G': 'G3', 'Down2F': 'F3', 'Down2E': 'E3', 'Down2D': 'D3', 'Down2C': 'C3',
+        'Down2B': 'B2', 'Down2A': 'A2', 'Down1G': 'G2', 'Down1F': 'F2', 'Down1E': 'E2', 'Down1D': 'D2', 'Down1C': 'C2', 'Down1B': 'B1'
+    };
 
-            // ===== 低音谱表 (Down) =====
-            // Group 4: C4, D4, E4, F4 (中央C组)
-            'Down3F': 4, 'Down3E': 4, 'Down3D': 4, 'Down3C': 4,
-            // Group 3: A3, B3, C3, D3, E3, F3, G3
-            'Down3B': 3, 'Down3A': 3, 'Down2G': 3, 'Down2F': 3, 'Down2E': 3, 'Down2D': 3, 'Down2C': 3,
-            // Group 2: C2, D2, E2, F2, G2, A2, B2
-            'Down2B': 2, 'Down2A': 2, 'Down1G': 2, 'Down1F': 2, 'Down1E': 2, 'Down1D': 2, 'Down1C': 2,
-            // Group 1: B1 (低音谱表最低音)
-            'Down1B': 1
-        };
-        return noteGroups[noteClass] !== undefined ? noteGroups[noteClass] : 4;
+    // 根据位置获取对应的琴键
+    function getKeyAtPosition(percentX) {
+        // 先检查黑键（黑键在白键之上）
+        for (var i = 0; i < pianoKeys.length; i++) {
+            if (pianoKeys[i].type === 'black') {
+                if (percentX >= pianoKeys[i].left && percentX <= pianoKeys[i].left + pianoKeys[i].width) {
+                    return pianoKeys[i];
+                }
+            }
+        }
+        // 再检查白键
+        for (var j = 0; j < pianoKeys.length; j++) {
+            if (pianoKeys[j].type === 'white') {
+                if (percentX >= pianoKeys[j].left && percentX <= pianoKeys[j].left + pianoKeys[j].width) {
+                    return pianoKeys[j];
+                }
+            }
+        }
+        return null;
     }
 
-    // 工具函数
-    function createMask(groupIndex, colorClass) {
-        var mask = document.createElement('div');
-        mask.className = 'group-mask ' + colorClass;
-        mask.style.left = groupPositions[groupIndex].left;
-        mask.style.width = groupPositions[groupIndex].width;
-        return mask;
+    // 显示放大镜
+    function showMagnifier(x, y) {
+        var containerRect = document.querySelector('.container').getBoundingClientRect();
+        var magnifierSize = 120;
+
+        // 计算放大镜位置（在触摸位置上方）
+        var magnifierX = x - magnifierSize / 2;
+        var magnifierY = y - magnifierSize - 20; // 上方20px
+
+        // 边界检查
+        if (magnifierX < 0) magnifierX = 10;
+        if (magnifierX + magnifierSize > containerRect.width) {
+            magnifierX = containerRect.width - magnifierSize - 10;
+        }
+        if (magnifierY < 0) magnifierY = y + 20; // 如果上方空间不够，显示在下方
+
+        magnifier.style.left = magnifierX + 'px';
+        magnifier.style.top = magnifierY + 'px';
+        magnifier.style.display = 'block';
+        isMagnifierVisible = true;
+
+        // 更新放大镜内容位置
+        updateMagnifierContent(x, y);
     }
 
-    function createFullPianoMask() {
-        var mask = document.createElement('div');
-        mask.className = 'full-piano-mask mask-yellow';
-        return mask;
-    }
-
-    function clearMasks() {
-        maskContainer.innerHTML = '';
-    }
-
-    // 显示弹出框在指定音组下方
-    function showPopup(groupIndex) {
-        var groupPos = groupPositions[groupIndex];
+    // 更新放大镜内容（实现放大效果）
+    function updateMagnifierContent(touchX, touchY) {
         var fullPianoRect = fullPiano.getBoundingClientRect();
         var containerRect = document.querySelector('.container').getBoundingClientRect();
 
-        // 计算音组中心位置（相对于容器）
-        var groupLeftPercent = parseFloat(groupPos.left);
-        var groupWidthPercent = parseFloat(groupPos.width);
-        var groupCenterPercent = groupLeftPercent + groupWidthPercent / 2;
+        // 计算触摸位置相对于钢琴图片的百分比
+        var pianoPercentX = ((touchX - fullPianoRect.left) / fullPianoRect.width) * 100;
 
-        // 弹出框宽度固定为280px
-        var popupWidth = 280;
-        var containerWidth = containerRect.width;
-        var centerX = (groupCenterPercent / 100) * containerWidth;
+        // 放大镜显示区域的中心对应钢琴上的位置
+        // 放大镜内的图片是原图的2.5倍放大
+        var scale = magnifierScale;
+        var magnifierSize = 120;
 
-        // 计算小三角位置（相对于弹出框的百分比）
-        // 默认弹出框居中于音组，小三角在50%
-        var trianglePercent = 50;
-        var popupLeft = centerX - popupWidth / 2;
+        // 计算放大镜内图片的偏移，使得触摸位置显示在放大镜中心
+        // 图片放大后，需要反向移动来显示正确的区域
+        var offsetX = (magnifierSize / 2) - (pianoPercentX / 100 * fullPianoRect.width * scale);
+        var offsetY = (magnifierSize / 2) - ((touchY - fullPianoRect.top) / fullPianoRect.height * fullPianoRect.height * scale);
 
-        // 边界检查：确保弹出框不超出容器
-        var minLeft = 10;
-        var maxLeft = containerWidth - popupWidth - 10;
+        // 限制偏移范围，防止显示空白
+        var maxOffsetX = 0;
+        var minOffsetX = magnifierSize - (fullPianoRect.width * scale);
+        var maxOffsetY = 0;
+        var minOffsetY = magnifierSize - (fullPianoRect.height * scale);
 
-        if (popupLeft < minLeft) {
-            // 弹出框靠左边缘，小三角位置需要调整
-            popupLeft = minLeft;
-            // 计算小三角相对于弹出框的位置
-            var triangleX = centerX - popupLeft;
-            trianglePercent = (triangleX / popupWidth) * 100;
-        } else if (popupLeft > maxLeft) {
-            // 弹出框靠右边缘，小三角位置需要调整
-            popupLeft = maxLeft;
-            var triangleX = centerX - popupLeft;
-            trianglePercent = (triangleX / popupWidth) * 100;
-        }
+        offsetX = Math.max(minOffsetX, Math.min(maxOffsetX, offsetX));
+        offsetY = Math.max(minOffsetY, Math.min(maxOffsetY, offsetY));
 
-        // 设置小三角位置（CSS变量）
-        pianoPopup.style.setProperty('--triangle-left', trianglePercent + '%');
-
-        // 设置弹出框位置（在大键盘下方，靠近一点）
-        pianoPopup.style.left = popupLeft + 'px';
-        pianoPopup.style.top = (fullPianoRect.bottom - containerRect.top + 5) + 'px';
-        pianoPopup.style.display = 'block';
+        magnifierContent.style.transform = 'translate(' + offsetX + 'px, ' + offsetY + 'px) scale(' + scale + ')';
+        magnifierContent.style.transformOrigin = '0 0';
     }
 
-    // 隐藏弹出框
-    function hidePopup() {
-        pianoPopup.style.display = 'none';
+    // 隐藏放大镜
+    function hideMagnifier() {
+        magnifier.style.display = 'none';
+        isMagnifierVisible = false;
+        if (selectedKeyElement) {
+            selectedKeyElement.remove();
+            selectedKeyElement = null;
+        }
+    }
+
+    // 高亮选中的琴键
+    function highlightKey(key) {
+        if (selectedKeyElement) {
+            selectedKeyElement.remove();
+        }
+
+        var fullPianoRect = fullPiano.getBoundingClientRect();
+        var highlight = document.createElement('div');
+        highlight.className = 'key-highlight-mask';
+        highlight.style.left = key.left + '%';
+        highlight.style.width = key.width + '%';
+        highlight.style.top = '0';
+        highlight.style.height = key.type === 'black' ? '60%' : '100%';
+
+        maskContainer.appendChild(highlight);
+        selectedKeyElement = highlight;
+    }
+
+    // 显示选中琴键的音符名
+    function showKeyLabel(key) {
+        // 可以在放大镜中心显示当前选中的音符名
+        // 这里简化处理，只高亮显示
     }
 
     function showMessage(message, type) {
@@ -778,109 +783,113 @@
         }, 10);
     }
 
-    // 重置游戏状态（用于下一题）
-    function resetGame() {
-        gameState.status = State.IDLE;
-        gameState.selectedGroup = null;
-        gameState.correctGroup = null;
-        clearMasks();
-        hidePopup();
+    // 清除所有遮罩
+    function clearMasks() {
+        maskContainer.innerHTML = '';
+        selectedKeyElement = null;
     }
 
     // 初始化新题目
     function initNewQuestion() {
         randomizeNote();
-        var correctGroup = getNoteGroup(note.className);
-        gameState.correctGroup = correctGroup;
-        gameState.status = State.IDLE;
-        gameState.selectedGroup = null;
         clearMasks();
-        console.log('New question:', note.className, 'Group:', correctGroup);
+        console.log('New question:', note.className, 'Key:', noteToKey[note.className]);
     }
 
-    // 大键盘组点击处理
-    var octaveGroups = document.querySelectorAll('.octave-group');
-    octaveGroups.forEach(function(group) {
-        group.addEventListener('click', function() {
-            var groupNum = parseInt(this.getAttribute('data-group'));
-            console.log('Group clicked:', groupNum, 'Current state:', gameState.status, 'Correct group:', gameState.correctGroup);
-
-            if (gameState.status === State.IDLE) {
-                if (groupNum === gameState.correctGroup) {
-                    // IDLE → GROUP_SELECTED: 选择正确组
-                    console.log('Correct group selected!');
-                    gameState.status = State.GROUP_SELECTED;
-                    gameState.selectedGroup = groupNum;
-                    maskContainer.appendChild(createMask(groupNum, 'mask-gray'));
-                    // 显示弹出框
-                    showPopup(groupNum);
-                } else {
-                    // IDLE → IDLE: 选择错误组，显示红色提示
-                    console.log('Wrong group, showing red mask on correct group:', gameState.correctGroup);
-                    var correctMask = createMask(gameState.correctGroup, 'mask-red');
-                    maskContainer.appendChild(correctMask);
-                    setTimeout(function() {
-                        if (correctMask.parentNode === maskContainer) {
-                            maskContainer.removeChild(correctMask);
-                        }
-                    }, 1000);
-                }
-            }
-            // GROUP_SELECTED 状态下点击其他组：忽略，但允许点击当前选中组来关闭弹出框
-            else if (gameState.status === State.GROUP_SELECTED) {
-                if (groupNum === gameState.selectedGroup) {
-                    // 再次点击已选中的组，关闭弹出框
-                    hidePopup();
-                    gameState.status = State.IDLE;
-                    gameState.selectedGroup = null;
-                    clearMasks();
-                }
-            }
-        });
-    });
-
-    // 小键盘点击处理（弹出框内）
-    var fun6 = function(event) {
+    // 处理触摸/鼠标开始
+    function handleStart(event) {
         event.preventDefault();
+        var touch = event.touches ? event.touches[0] : event;
+        var fullPianoRect = fullPiano.getBoundingClientRect();
 
-        if (gameState.status === State.ANSWERING) {
-            return; // 防止重复点击
-        }
-
-        var target = event.target;
-        var key = note.className.slice(-1);
-        if (target.nodeName === "SPAN") {
-            target = target.parentNode;
-        }
-        target.className = target.className.replace("pressDown", "pressUp");
-
-        if (gameState.status === State.IDLE) {
-            // 未选组直接点小键盘 - 现在这种情况不会发生，因为弹出框未显示
+        // 检查是否在大键盘区域内
+        if (touch.clientY < fullPianoRect.top || touch.clientY > fullPianoRect.bottom) {
             return;
         }
 
-        if (gameState.status === State.GROUP_SELECTED) {
-            gameState.status = State.ANSWERING;
-            var clickedKey = target.className.split(/[^^]key/)[1][0];
+        currentTouchPos.x = touch.clientX;
+        currentTouchPos.y = touch.clientY;
+        isLongPress = false;
 
-            if (clickedKey === key) {
-                // 答对：显示正确，关闭弹出框，然后下一题
-                showMessage(key + "/" + noteToSolfege[key], 'right');
-                hidePopup();
-                setTimeout(function() {
-                    initNewQuestion();
-                }, 250); // 缩短到250ms
-            } else {
-                // 答错：显示错误，保持当前状态等待再次尝试
-                showMessage(key + "/" + noteToSolfege[key], 'wrong');
-                gameState.status = State.GROUP_SELECTED; // 恢复状态，允许再次尝试
+        // 开始长按计时
+        longPressTimer = setTimeout(function() {
+            isLongPress = true;
+            showMagnifier(currentTouchPos.x, currentTouchPos.y);
+        }, 300); // 300ms触发长按
+    }
+
+    // 处理触摸/鼠标移动
+    function handleMove(event) {
+        event.preventDefault();
+        if (!isLongPress) {
+            // 如果移动了，取消长按
+            clearTimeout(longPressTimer);
+            return;
+        }
+
+        var touch = event.touches ? event.touches[0] : event;
+        currentTouchPos.x = touch.clientX;
+        currentTouchPos.y = touch.clientY;
+
+        // 更新放大镜位置和内容
+        if (isMagnifierVisible) {
+            showMagnifier(currentTouchPos.x, currentTouchPos.y);
+
+            // 高亮当前选中的琴键
+            var fullPianoRect = fullPiano.getBoundingClientRect();
+            var percentX = ((currentTouchPos.x - fullPianoRect.left) / fullPianoRect.width) * 100;
+            var key = getKeyAtPosition(percentX);
+            if (key) {
+                highlightKey(key);
             }
         }
-    };
+    }
 
-    // 绑定弹出框内小键盘的事件
-    popupPiano.addEventListener("touchend", fun6);
-    popupPiano.addEventListener("mouseup", fun6);
+    // 处理触摸/鼠标结束
+    function handleEnd(event) {
+        clearTimeout(longPressTimer);
+
+        if (isLongPress && isMagnifierVisible) {
+            // 长按结束，检查选中的琴键
+            var fullPianoRect = fullPiano.getBoundingClientRect();
+            var percentX = ((currentTouchPos.x - fullPianoRect.left) / fullPianoRect.width) * 100;
+            var key = getKeyAtPosition(percentX);
+
+            if (key) {
+                // 检查答案
+                var targetKey = noteToKey[note.className];
+                var targetNote = targetKey.replace(/\d/, ''); // 提取音符名（去掉数字）
+                var clickedNote = key.note.replace(/\d/, '');
+
+                if (clickedNote === targetNote && key.note === targetKey) {
+                    // 答对
+                    showMessage(clickedNote + '/' + noteToSolfege[clickedNote], 'right');
+                    hideMagnifier();
+                    setTimeout(function() {
+                        initNewQuestion();
+                    }, 250);
+                } else {
+                    // 答错
+                    showMessage(targetNote + '/' + noteToSolfege[targetNote], 'wrong');
+                    hideMagnifier();
+                }
+            } else {
+                hideMagnifier();
+            }
+        }
+
+        isLongPress = false;
+    }
+
+    // 绑定大键盘事件
+    fullPiano.addEventListener('touchstart', handleStart, { passive: false });
+    fullPiano.addEventListener('touchmove', handleMove, { passive: false });
+    fullPiano.addEventListener('touchend', handleEnd);
+    fullPiano.addEventListener('mousedown', handleStart);
+    fullPiano.addEventListener('mousemove', handleMove);
+    fullPiano.addEventListener('mouseup', handleEnd);
+    fullPiano.addEventListener('mouseleave', handleEnd);
+
     // 保留原小键盘事件（以防需要恢复）
     painoDown.addEventListener("touchend", fun5);
     painoDown.addEventListener("mouseup", fun5);
