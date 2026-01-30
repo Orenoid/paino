@@ -350,23 +350,25 @@
             pointer-events: none;
         }
 
-        /* 放大镜中心指示器 */
-        #magnifier-center {
+        /* 放大镜内的遮罩层容器 */
+        #magnifier-mask-container {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            transform: translate(-50%, -50%);
-            border: 2px solid rgba(255, 0, 0, 0.6);
-            border-radius: 50%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
             z-index: 101;
+            border-radius: 50%;
+            overflow: hidden;
         }
 
-        /* 选中键的高亮效果 */
-        .key-selected {
-            background-color: rgba(255, 255, 150, 0.8) !important;
+        /* 放大镜内的琴键高亮遮罩 - 需要配合 background-size: 400% */
+        .magnifier-key-highlight {
+            position: absolute;
+            background-color: rgba(255, 255, 150, 0.7);
+            pointer-events: none;
+            z-index: 102;
         }
 
     </style>
@@ -421,7 +423,8 @@
         </div>
         <!-- 放大镜 -->
         <div id="magnifier">
-            <div id="magnifier-center"></div>
+            <!-- 遮罩层容器（用于高亮选中的琴键） -->
+            <div id="magnifier-mask-container"></div>
         </div>
         <!-- 错误提示移到大键盘下方 -->
         <div id="tips" class="hidden">
@@ -449,6 +452,7 @@
     var tips = document.getElementById("tips");
     var answer = document.getElementById("answer");
     var maskContainer = document.getElementById("mask-container");
+    var magnifierMaskContainer = document.getElementById("magnifier-mask-container");
 
     function randomizeNote() {
         var shangxian = 19;
@@ -723,34 +727,109 @@
         var bgPosY = 50; // 垂直方向固定显示中间
 
         magnifier.style.backgroundPosition = bgPosX + '% ' + bgPosY + '%';
+
+        // 更新放大镜内的遮罩位置
+        if (currentHighlightedKey) {
+            updateMagnifierHighlight(currentHighlightedKey);
+        }
     }
 
     // 隐藏放大镜
     function hideMagnifier() {
         magnifier.style.display = 'none';
         isMagnifierVisible = false;
-        if (selectedKeyElement) {
-            selectedKeyElement.remove();
-            selectedKeyElement = null;
-        }
+        clearKeyHighlights();
     }
 
-    // 高亮选中的琴键
-    function highlightKey(key) {
-        if (selectedKeyElement) {
-            selectedKeyElement.remove();
-        }
+    // 当前高亮的琴键
+    var currentHighlightedKey = null;
 
-        var fullPianoRect = fullPiano.getBoundingClientRect();
+    // 高亮选中的琴键（同时在大键盘和放大镜中显示）
+    function highlightKey(key) {
+        if (currentHighlightedKey === key) return; // 避免重复渲染
+        currentHighlightedKey = key;
+
+        // 清除之前的高亮
+        clearKeyHighlights();
+
+        // 在大键盘上创建高亮遮罩
         var highlight = document.createElement('div');
         highlight.className = 'key-highlight-mask';
         highlight.style.left = key.left + '%';
         highlight.style.width = key.width + '%';
         highlight.style.top = '0';
         highlight.style.height = key.type === 'black' ? '60%' : '100%';
-
         maskContainer.appendChild(highlight);
         selectedKeyElement = highlight;
+
+        // 更新放大镜内的遮罩
+        updateMagnifierHighlight(key);
+    }
+
+    // 更新放大镜内的高亮遮罩位置
+    function updateMagnifierHighlight(key) {
+        if (!key || !isMagnifierVisible) return;
+
+        // 清空之前的放大镜遮罩
+        magnifierMaskContainer.innerHTML = '';
+
+        // 获取当前放大镜显示的区域
+        var bgPos = magnifier.style.backgroundPosition;
+        var bgPosMatch = bgPos.match(/([\d.]+)%\s+([\d.]+)%/);
+        if (!bgPosMatch) return;
+
+        var bgPosX = parseFloat(bgPosMatch[1]);
+
+        // 计算放大镜显示的图片区域（百分比）
+        // 当 bgPos = 12.5% 时，显示的是图片最左端（0% ~ 25%）
+        // 当 bgPos = 50% 时，显示的是图片中间（37.5% ~ 62.5%）
+        // 当 bgPos = 87.5% 时，显示的是图片最右端（75% ~ 100%）
+        // 显示区域中心 = (bgPos - 12.5) / 0.75
+        // 显示区域左边界 = 显示区域中心 - 12.5%
+        var viewCenterPercent = (bgPosX - 12.5) / 0.75;
+        var viewLeftPercent = viewCenterPercent - 12.5;
+        var viewRightPercent = viewCenterPercent + 12.5;
+
+        // 检查琴键是否在放大镜可视区域内
+        var keyLeft = key.left;
+        var keyRight = key.left + key.width;
+
+        // 计算琴键在放大镜内的相对位置
+        // 放大镜显示 25% 的宽度（因为放大了4倍）
+        // 遮罩在放大镜内的位置 = (琴键位置 - 可视区域左边界) / 25% * 100%
+        if (keyRight > viewLeftPercent && keyLeft < viewRightPercent) {
+            var relativeLeft = ((keyLeft - viewLeftPercent) / 25) * 100;
+            var relativeWidth = (key.width / 25) * 100;
+
+            // 限制在放大镜范围内
+            if (relativeLeft < 0) {
+                relativeWidth += relativeLeft;
+                relativeLeft = 0;
+            }
+            if (relativeLeft + relativeWidth > 100) {
+                relativeWidth = 100 - relativeLeft;
+            }
+
+            if (relativeWidth > 0) {
+                var magnifierHighlight = document.createElement('div');
+                magnifierHighlight.className = 'magnifier-key-highlight';
+                magnifierHighlight.style.left = relativeLeft + '%';
+                magnifierHighlight.style.width = relativeWidth + '%';
+                magnifierHighlight.style.top = '0';
+                magnifierHighlight.style.height = key.type === 'black' ? '60%' : '100%';
+                magnifierMaskContainer.appendChild(magnifierHighlight);
+            }
+        }
+    }
+
+    // 清除所有高亮（大键盘和放大镜）
+    function clearKeyHighlights() {
+        currentHighlightedKey = null;
+        if (selectedKeyElement) {
+            selectedKeyElement.remove();
+            selectedKeyElement = null;
+        }
+        magnifierMaskContainer.innerHTML = '';
     }
 
     // 显示选中琴键的音符名
@@ -842,6 +921,8 @@
             var key = getKeyAtPosition(percentX);
             if (key) {
                 highlightKey(key);
+            } else {
+                clearKeyHighlights();
             }
         }
     }
