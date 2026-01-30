@@ -345,12 +345,12 @@
             overflow: hidden;
         }
 
-        /* 放大镜内部容器 - 400%宽度用于显示放大的键盘 */
+        /* 放大镜内部容器 - 800%宽度用于显示8倍放大的键盘 */
         #magnifier-content {
             position: absolute;
             top: 0;
             left: 0;
-            width: 400%;
+            width: 800%;
             height: 100%;
             transform-origin: 0 0;
         }
@@ -382,14 +382,14 @@
             background-color: rgba(255, 255, 150, 0.7);
             pointer-events: none;
             z-index: 102;
-            /* 键盘在放大镜中约占 25% 的高度，位于中间偏上位置 */
-            top: 37.5%; /* (100% - 25%) / 2 = 37.5%，垂直居中 */
-            height: 25%;
+            /* 键盘在放大镜中垂直居中显示 */
+            top: 25%;
+            height: 50%;
         }
 
         /* 黑键遮罩在放大镜内 - 只覆盖上部（黑键区域） */
         .magnifier-key-highlight.black {
-            height: 15%; /* 25% * 0.6 = 15% */
+            height: 30%; /* 50% * 0.6 = 30% */
         }
 
     </style>
@@ -716,8 +716,8 @@
             magnifierX = containerRect.width - magnifierSize - 10;
         }
 
-        // 垂直方向：固定在键盘上方（可配置的偏移量）
-        var magnifierY = fullPianoRect.top - containerRect.top - magnifierSize + magnifierVerticalOffset;
+        // 垂直方向：固定在键盘上方（放大镜在大键盘上面）
+        var magnifierY = fullPianoRect.top - containerRect.top - magnifierSize - 10;
 
         magnifier.style.left = magnifierX + 'px';
         magnifier.style.top = magnifierY + 'px';
@@ -736,12 +736,12 @@
         var rawPercentX = ((touchX - fullPianoRect.left) / fullPianoRect.width);
         var pianoPercentX = Math.max(0, Math.min(1, rawPercentX));
 
-        // 放大镜容器宽度 150px，内容宽度 600px（400%）
+        // 放大镜容器宽度 150px，内容宽度 1200px（800%）
         // 为了让放大镜中心对准触摸位置，需要移动内容容器
-        // 最左端：translateX(0px)，最右端：translateX(-450px)
+        // 最左端：translateX(0px)，最右端：translateX(-1050px)
         var magnifierWidth = 150;
-        var contentWidth = magnifierWidth * 4; // 600px
-        var maxOffset = -(contentWidth - magnifierWidth); // -450px
+        var contentWidth = magnifierWidth * 8; // 1200px
+        var maxOffset = -(contentWidth - magnifierWidth); // -1050px
 
         // 计算偏移量：触摸在0%时偏移0，触摸在100%时偏移-450px
         var offsetX = pianoPercentX * maxOffset;
@@ -803,9 +803,9 @@
         var offsetX = parseFloat(match[1]);
 
         // 计算放大镜可视区域的左右边界（相对于内容容器的百分比）
-        // 内容容器宽度 = 600px (400% of 150px)
-        // 可视区域左边界 = -offsetX / 600 * 100%
-        var contentWidth = 600;
+        // 内容容器宽度 = 1200px (800% of 150px)
+        // 可视区域左边界 = -offsetX / 1200 * 100%
+        var contentWidth = 1200;
         var magnifierWidth = 150;
         var viewLeftPercent = (-offsetX / contentWidth) * 100;
         var viewRightPercent = ((-offsetX + magnifierWidth) / contentWidth) * 100;
