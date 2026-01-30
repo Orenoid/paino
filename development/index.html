@@ -333,8 +333,8 @@
         /* 放大镜样式 */
         #magnifier {
             position: absolute;
-            width: 120px;
-            height: 120px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
             border: 3px solid #333;
             background: white;
@@ -345,18 +345,18 @@
             pointer-events: none;
         }
 
-        /* 放大镜内的放大键盘 */
+        /* 放大镜内的放大键盘 - 使用更大的尺寸实现放大效果 */
         #magnifier-content {
             position: absolute;
-            width: 240px;
-            height: 240px;
-            transform-origin: center center;
+            width: 600px;
+            height: 600px;
+            transform-origin: 0 0;
         }
 
         #magnifier-content img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: fill;
         }
 
         /* 放大镜中心指示器 */
@@ -547,10 +547,11 @@
     var longPressTimer = null;
     var isLongPress = false;
     var isMagnifierVisible = false;
-    var magnifierScale = 2.5; // 放大倍数
-    var magnifierOffset = { x: 0, y: -140 }; // 放大镜相对于触摸位置的偏移（上方）
+    var magnifierScale = 4; // 放大倍数（图片600px / 显示区域150px = 4倍）
+    var magnifierVerticalOffset = 180; // 放大镜在键盘上方的偏移量（可调整）
     var currentTouchPos = { x: 0, y: 0 };
     var selectedKeyElement = null;
+    var triggerAreaPadding = 50; // 触发区域上下扩展的像素
 
     // 88键钢琴的键位信息（基于白键百分比位置）
     // 白键共52个，黑键36个
@@ -686,18 +687,20 @@
     // 显示放大镜
     function showMagnifier(x, y) {
         var containerRect = document.querySelector('.container').getBoundingClientRect();
-        var magnifierSize = 120;
+        var fullPianoRect = fullPiano.getBoundingClientRect();
+        var magnifierSize = 150;
 
-        // 计算放大镜位置（在触摸位置上方）
+        // 水平方向：跟随手指，但保持在容器内
         var magnifierX = x - magnifierSize / 2;
-        var magnifierY = y - magnifierSize - 20; // 上方20px
 
-        // 边界检查
+        // 边界检查（水平方向）
         if (magnifierX < 0) magnifierX = 10;
         if (magnifierX + magnifierSize > containerRect.width) {
             magnifierX = containerRect.width - magnifierSize - 10;
         }
-        if (magnifierY < 0) magnifierY = y + 20; // 如果上方空间不够，显示在下方
+
+        // 垂直方向：固定在键盘上方（可配置的偏移量）
+        var magnifierY = fullPianoRect.top - containerRect.top - magnifierSize + magnifierVerticalOffset;
 
         magnifier.style.left = magnifierX + 'px';
         magnifier.style.top = magnifierY + 'px';
@@ -705,38 +708,39 @@
         isMagnifierVisible = true;
 
         // 更新放大镜内容位置
-        updateMagnifierContent(x, y);
+        updateMagnifierContent(x);
     }
 
     // 更新放大镜内容（实现放大效果）
-    function updateMagnifierContent(touchX, touchY) {
+    function updateMagnifierContent(touchX) {
         var fullPianoRect = fullPiano.getBoundingClientRect();
         var containerRect = document.querySelector('.container').getBoundingClientRect();
 
         // 计算触摸位置相对于钢琴图片的百分比
-        var pianoPercentX = ((touchX - fullPianoRect.left) / fullPianoRect.width) * 100;
+        var pianoPercentX = ((touchX - fullPianoRect.left) / fullPianoRect.width);
 
         // 放大镜显示区域的中心对应钢琴上的位置
-        // 放大镜内的图片是原图的2.5倍放大
         var scale = magnifierScale;
-        var magnifierSize = 120;
+        var magnifierSize = 150;
+        var contentSize = 600; // 放大镜内图片的实际尺寸
 
-        // 计算放大镜内图片的偏移，使得触摸位置显示在放大镜中心
-        // 图片放大后，需要反向移动来显示正确的区域
-        var offsetX = (magnifierSize / 2) - (pianoPercentX / 100 * fullPianoRect.width * scale);
-        var offsetY = (magnifierSize / 2) - ((touchY - fullPianoRect.top) / fullPianoRect.height * fullPianoRect.height * scale);
+        // 计算放大镜内图片的偏移
+        // 触摸位置的百分比 * 放大后的图片宽度 = 应该显示的中心点
+        var targetCenterX = pianoPercentX * contentSize;
 
-        // 限制偏移范围，防止显示空白
+        // 偏移量 = 放大镜中心 - 目标中心
+        var offsetX = (magnifierSize / 2) - targetCenterX;
+
+        // 垂直方向：显示键盘中间部分（黑键区域）
+        var targetCenterY = contentSize * 0.3; // 显示键盘上部30%的位置（包含黑键）
+        var offsetY = (magnifierSize / 2) - targetCenterY;
+
+        // 限制水平偏移范围，防止显示空白
         var maxOffsetX = 0;
-        var minOffsetX = magnifierSize - (fullPianoRect.width * scale);
-        var maxOffsetY = 0;
-        var minOffsetY = magnifierSize - (fullPianoRect.height * scale);
-
+        var minOffsetX = magnifierSize - contentSize;
         offsetX = Math.max(minOffsetX, Math.min(maxOffsetX, offsetX));
-        offsetY = Math.max(minOffsetY, Math.min(maxOffsetY, offsetY));
 
-        magnifierContent.style.transform = 'translate(' + offsetX + 'px, ' + offsetY + 'px) scale(' + scale + ')';
-        magnifierContent.style.transformOrigin = '0 0';
+        magnifierContent.style.transform = 'translate(' + offsetX + 'px, ' + offsetY + 'px)';
     }
 
     // 隐藏放大镜
@@ -798,12 +802,18 @@
 
     // 处理触摸/鼠标开始
     function handleStart(event) {
+        // 防止浏览器默认行为（如下载图片菜单）
         event.preventDefault();
+        event.stopPropagation();
+
         var touch = event.touches ? event.touches[0] : event;
         var fullPianoRect = fullPiano.getBoundingClientRect();
 
-        // 检查是否在大键盘区域内
-        if (touch.clientY < fullPianoRect.top || touch.clientY > fullPianoRect.bottom) {
+        // 检查是否在扩展的触发区域内（键盘上下各扩展50px）
+        var triggerTop = fullPianoRect.top - triggerAreaPadding;
+        var triggerBottom = fullPianoRect.bottom + triggerAreaPadding;
+
+        if (touch.clientY < triggerTop || touch.clientY > triggerBottom) {
             return;
         }
 
@@ -820,18 +830,27 @@
 
     // 处理触摸/鼠标移动
     function handleMove(event) {
+        // 防止浏览器默认行为
         event.preventDefault();
+        event.stopPropagation();
+
+        var touch = event.touches ? event.touches[0] : event;
+
+        // 如果还没触发长按，检查移动距离是否超过阈值
         if (!isLongPress) {
-            // 如果移动了，取消长按
-            clearTimeout(longPressTimer);
+            var moveDistance = Math.abs(touch.clientX - currentTouchPos.x) +
+                               Math.abs(touch.clientY - currentTouchPos.y);
+            // 如果移动超过10px，取消长按
+            if (moveDistance > 10) {
+                clearTimeout(longPressTimer);
+            }
             return;
         }
 
-        var touch = event.touches ? event.touches[0] : event;
         currentTouchPos.x = touch.clientX;
         currentTouchPos.y = touch.clientY;
 
-        // 更新放大镜位置和内容
+        // 更新放大镜位置和内容（只在水平方向跟随）
         if (isMagnifierVisible) {
             showMagnifier(currentTouchPos.x, currentTouchPos.y);
 
@@ -885,10 +904,15 @@
     fullPiano.addEventListener('touchstart', handleStart, { passive: false });
     fullPiano.addEventListener('touchmove', handleMove, { passive: false });
     fullPiano.addEventListener('touchend', handleEnd);
+    fullPiano.addEventListener('touchcancel', handleEnd);
     fullPiano.addEventListener('mousedown', handleStart);
     fullPiano.addEventListener('mousemove', handleMove);
     fullPiano.addEventListener('mouseup', handleEnd);
     fullPiano.addEventListener('mouseleave', handleEnd);
+
+    // 禁用大键盘图片的默认拖拽和右键菜单行为
+    pianoImg.addEventListener('dragstart', function(e) { e.preventDefault(); });
+    pianoImg.addEventListener('contextmenu', function(e) { e.preventDefault(); });
 
     // 保留原小键盘事件（以防需要恢复）
     painoDown.addEventListener("touchend", fun5);
