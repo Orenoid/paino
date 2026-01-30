@@ -307,8 +307,9 @@
             height: auto;
             margin-top: 10px;
             border-top: 1px solid gray;
-            /* 初始位置下移约2个键盘高度（约60px），为放大镜和动画腾出空间 */
-            transform: translateY(60px);
+            /* 初始位置下移：放大镜高度(150px) + 1-2个键盘高度(60px) = 210px
+               这样上滑60px后，顶部距离琴谱还有150px，正好放下放大镜 */
+            transform: translateY(210px);
             transition: transform 0.3s ease-out;
         }
 
