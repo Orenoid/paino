@@ -307,6 +307,14 @@
             height: auto;
             margin-top: 10px;
             border-top: 1px solid gray;
+            /* 初始位置下移，为放大镜和动画腾出空间 */
+            transform: translateY(200px);
+            transition: transform 0.3s ease-out;
+        }
+
+        /* 大键盘上滑状态 */
+        #full-piano.slide-up {
+            transform: translateY(0);
         }
 
         #full-piano img {
@@ -760,6 +768,8 @@
         magnifier.style.display = 'none';
         isMagnifierVisible = false;
         clearKeyHighlights();
+        // 键盘返回原位
+        fullPiano.classList.remove('slide-up');
     }
 
     // 当前高亮的琴键
@@ -887,7 +897,14 @@
         // 开始长按计时
         longPressTimer = setTimeout(function() {
             isLongPress = true;
-            showMagnifier(currentTouchPos.x, currentTouchPos.y);
+            // 先触发键盘上滑动画
+            fullPiano.classList.add('slide-up');
+            // 等待动画完成后再显示放大镜（300ms动画）
+            setTimeout(function() {
+                if (isLongPress) {
+                    showMagnifier(currentTouchPos.x, currentTouchPos.y);
+                }
+            }, 300);
         }, 300); // 300ms触发长按
     }
 
@@ -906,6 +923,10 @@
             // 如果移动超过10px，取消长按
             if (moveDistance > 10) {
                 clearTimeout(longPressTimer);
+                // 如果键盘已经上滑，恢复原位
+                if (fullPiano.classList.contains('slide-up')) {
+                    fullPiano.classList.remove('slide-up');
+                }
             }
             return;
         }
