@@ -371,6 +371,18 @@
             z-index: 102;
         }
 
+        /* 黑键遮罩在放大镜内 - 黑键只占键盘上部约60% */
+        .magnifier-key-highlight.black {
+            top: 0;
+            height: 65%;
+        }
+
+        /* 白键遮罩在放大镜内 - 白键占满整个键盘高度 */
+        .magnifier-key-highlight.white {
+            top: 0;
+            height: 100%;
+        }
+
     </style>
 </head>
 <body>
@@ -812,11 +824,10 @@
 
             if (relativeWidth > 0) {
                 var magnifierHighlight = document.createElement('div');
-                magnifierHighlight.className = 'magnifier-key-highlight';
+                magnifierHighlight.className = 'magnifier-key-highlight ' + key.type;
                 magnifierHighlight.style.left = relativeLeft + '%';
                 magnifierHighlight.style.width = relativeWidth + '%';
                 magnifierHighlight.style.top = '0';
-                magnifierHighlight.style.height = key.type === 'black' ? '60%' : '100%';
                 magnifierMaskContainer.appendChild(magnifierHighlight);
             }
         }
