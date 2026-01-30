@@ -371,16 +371,16 @@
             z-index: 102;
         }
 
-        /* 黑键遮罩在放大镜内 - 黑键位于键盘上部 */
-        .magnifier-key-highlight.black {
-            top: 28%;
-            height: 28%;
-        }
-
-        /* 白键遮罩在放大镜内 - 白键占满键盘 */
-        .magnifier-key-highlight.white {
-            top: 28%;
-            height: 44%;
+        /* 放大镜内的琴键高亮遮罩 */
+        .magnifier-key-highlight {
+            position: absolute;
+            background-color: rgba(255, 255, 150, 0.7);
+            pointer-events: none;
+            z-index: 102;
+            /* 遮罩高度与放大镜内显示的键盘高度匹配 */
+            height: 26%;
+            /* 顶部对齐放大镜内键盘的顶部 */
+            top: 38%;
         }
 
     </style>
