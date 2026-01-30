@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>五线谱记忆小工具</title>
     <meta name="viewport" content="width=device-width,user-scalable=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
 
         body{
@@ -47,14 +48,28 @@
             vertical-align: middle;
         }
 
-        .toggle-container, .select-container {
+        .select-container {
             display: inline-block;
             margin: 10px 5px;
             vertical-align: middle;
         }
 
-        .toggle-container span, .select-container span {
+        .select-container span {
             vertical-align: middle;
+        }
+
+        /* 提示文字样式 - 位于键盘初始位置下方 */
+        .keyboard-hint {
+            text-align: center;
+            color: #888;
+            font-size: 13px;
+            margin-top: 220px; /* 210px 键盘下移 + 10px 间距 */
+            margin-bottom: 5px;
+        }
+
+        .keyboard-hint i {
+            color: #f0ad4e;
+            margin-right: 5px;
         }
 
         .switch {
@@ -405,7 +420,7 @@
 </head>
 <body>
     <div class="container">
-        <div id="toolbalr">
+        <div id="toolbar" style="text-align: center;">
             <div class="select-container">
                 <span>谱表：</span>
                 <select id="changeMode">
@@ -414,14 +429,6 @@
                     <option value="down">仅低音谱表</option>
                 </select>
             </div>
-            <div class="toggle-container">
-                <span>显示音名/唱名：</span>
-                <label class="switch">
-                    <input type="checkbox" id="changeShow" checked>
-                    <span class="slider round"></span>
-                </label>
-            </div>
-            <!-- <input type="text" id="range"/> -->
         </div>
         <div id="showArea">
             <img id="stave" src="../stave.gif" alt="stave"/>
@@ -466,12 +473,15 @@
             <img src="../wrong.gif" id="wrong"/>
             <span id="answer">C</span>
         </div>
+        <!-- 提示文字 -->
+        <div class="keyboard-hint">
+            <i class="bi bi-lightbulb"></i>长按钢琴键盘以选择琴键
+        </div>
     </div>
 </body>
 <script>
     var notesUp = ["Up3D","Up3C","Up3B","Up3A","Up2G","Up2F","Up2E","Up2D","Up2C","Up2B","Up2A","Up1G","Up1F","Up1E","Up1D","Up1C","Up1B","Up1A","Up0G"];
     var notesDown = ["Down3F","Down3E","Down3D","Down3C","Down3B","Down3A","Down2G","Down2F","Down2E","Down2D","Down2C","Down2B","Down2A","Down1G","Down1F","Down1E","Down1D","Down1C","Down1B"];
-    var changeShow = document.getElementById("changeShow");
     var changeMode = document.getElementById("changeMode");
     var note = document.getElementById("note");
     var keyNames = document.querySelectorAll(".keyDownName, .keySolfegeName");
@@ -515,22 +525,6 @@
         'F': 'Fa',
         'G': 'Sol'
     };
-
-    var fun1 = function (event) {
-        event.preventDefault();
-        this.style.backgroundColor="#EAEAEA";
-    };
-    changeShow.addEventListener("touchstart", fun1);
-    changeShow.addEventListener("mousedown", fun1);
-
-    changeShow.addEventListener("change", function(event) {
-        var display = this.checked ? "" : "none";
-        for(var i=keyNames.length-1; i>=0; i--){
-            keyNames[i].style.display = display;
-        }
-        show = this.checked;
-    });
-
 
     changeMode.addEventListener("change", function(event) {
         mode = this.value;
