@@ -904,6 +904,13 @@
             setTimeout(function() {
                 if (isLongPress) {
                     showMagnifier(currentTouchPos.x, currentTouchPos.y);
+                    // 立即高亮当前位置的琴键
+                    var fullPianoRect = fullPiano.getBoundingClientRect();
+                    var percentX = ((currentTouchPos.x - fullPianoRect.left) / fullPianoRect.width) * 100;
+                    var key = getKeyAtPosition(percentX);
+                    if (key) {
+                        highlightKey(key);
+                    }
                 }
             }, 300);
         }, 300); // 300ms触发长按
