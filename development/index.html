@@ -330,33 +330,21 @@
             height: 25px;
         }
 
-        /* 放大镜样式 */
+        /* 放大镜样式 - 使用背景图实现 */
         #magnifier {
             position: absolute;
             width: 150px;
             height: 150px;
             border-radius: 50%;
             border: 3px solid #333;
-            background: white;
+            background-color: white;
+            background-image: url('../piano-88-keys.svg');
+            background-repeat: no-repeat;
+            background-size: 400% 400%; /* 4倍放大 */
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
             z-index: 100;
             display: none;
-            overflow: hidden;
             pointer-events: none;
-        }
-
-        /* 放大镜内的放大键盘 - 使用更大的尺寸实现放大效果 */
-        #magnifier-content {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            transform-origin: 0 0;
-        }
-
-        #magnifier-content img {
-            width: 100%;
-            height: 100%;
-            object-fit: fill;
         }
 
         /* 放大镜中心指示器 */
@@ -430,9 +418,6 @@
         </div>
         <!-- 放大镜 -->
         <div id="magnifier">
-            <div id="magnifier-content">
-                <img src="../piano-88-keys.svg" alt="放大键盘">
-            </div>
             <div id="magnifier-center"></div>
         </div>
         <!-- 错误提示移到大键盘下方 -->
@@ -454,7 +439,6 @@
     var fullPiano = document.getElementById("full-piano");
     var pianoImg = document.getElementById("piano-img");
     var magnifier = document.getElementById("magnifier");
-    var magnifierContent = document.getElementById("magnifier-content");
     var show = true;
     var mode = changeMode.value;
     var right = document.getElementById("right");
@@ -711,36 +695,22 @@
         updateMagnifierContent(x);
     }
 
-    // 更新放大镜内容（实现放大效果）
+    // 更新放大镜内容（使用 background-position 实现放大效果）
     function updateMagnifierContent(touchX) {
         var fullPianoRect = fullPiano.getBoundingClientRect();
-        var containerRect = document.querySelector('.container').getBoundingClientRect();
 
-        // 计算触摸位置相对于钢琴图片的百分比
+        // 计算触摸位置相对于钢琴图片的百分比 (0-1)
         var pianoPercentX = ((touchX - fullPianoRect.left) / fullPianoRect.width);
 
-        // 放大镜显示区域的中心对应钢琴上的位置
-        var scale = magnifierScale;
-        var magnifierSize = 150;
-        var contentSize = 600; // 放大镜内图片的实际尺寸
+        // 垂直方向固定显示键盘上部（包含黑键的区域）
+        var pianoPercentY = 0.25; // 显示从上往下25%的位置
 
-        // 计算放大镜内图片的偏移
-        // 触摸位置的百分比 * 放大后的图片宽度 = 应该显示的中心点
-        var targetCenterX = pianoPercentX * contentSize;
+        // 将百分比转换为 background-position
+        // 0% 表示图片左/上边缘，100% 表示图片右/下边缘
+        var bgPosX = pianoPercentX * 100;
+        var bgPosY = pianoPercentY * 100;
 
-        // 偏移量 = 放大镜中心 - 目标中心
-        var offsetX = (magnifierSize / 2) - targetCenterX;
-
-        // 垂直方向：显示键盘中间部分（黑键区域）
-        var targetCenterY = contentSize * 0.3; // 显示键盘上部30%的位置（包含黑键）
-        var offsetY = (magnifierSize / 2) - targetCenterY;
-
-        // 限制水平偏移范围，防止显示空白
-        var maxOffsetX = 0;
-        var minOffsetX = magnifierSize - contentSize;
-        offsetX = Math.max(minOffsetX, Math.min(maxOffsetX, offsetX));
-
-        magnifierContent.style.transform = 'translate(' + offsetX + 'px, ' + offsetY + 'px)';
+        magnifier.style.backgroundPosition = bgPosX + '% ' + bgPosY + '%';
     }
 
     // 隐藏放大镜
