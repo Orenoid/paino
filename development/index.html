@@ -74,10 +74,22 @@
             user-select: none;
             -webkit-touch-callout: none;
             pointer-events: none;
+            touch-action: none;
         }
 
         .keyboard-hint svg {
             pointer-events: none;
+        }
+
+        /* 防止文本被选中时显示高亮背景 */
+        .keyboard-hint::selection {
+            background: transparent;
+            color: inherit;
+        }
+
+        .keyboard-hint::-moz-selection {
+            background: transparent;
+            color: inherit;
         }
 
         .switch {
@@ -338,6 +350,7 @@
             pointer-events: auto;
             -webkit-user-select: none;
             user-select: none;
+            touch-action: none;
         }
 
         /* 大键盘上滑状态 - 相对上滑60px，从210px到150px */
@@ -430,7 +443,7 @@
 
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
     <div class="container">
         <div id="toolbar" style="text-align: center;">
             <div class="select-container">
