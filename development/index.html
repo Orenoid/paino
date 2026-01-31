@@ -72,6 +72,12 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            -webkit-touch-callout: none;
+            pointer-events: none;
+        }
+
+        .keyboard-hint svg {
+            pointer-events: none;
         }
 
         .switch {
@@ -328,6 +334,10 @@
                这样上滑60px后，顶部距离琴谱还有150px，正好放下放大镜 */
             transform: translateY(210px);
             transition: transform 0.3s ease-out;
+            /* 确保大键盘可以接收触摸事件 */
+            pointer-events: auto;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         /* 大键盘上滑状态 - 相对上滑60px，从210px到150px */
@@ -1012,7 +1022,10 @@
     // 禁用提示文字的文本选择，防止长按键盘时选中
     var keyboardHint = document.querySelector('.keyboard-hint');
     if (keyboardHint) {
+        // 阻止所有可能导致文本选择的事件
         keyboardHint.addEventListener('selectstart', function(e) { e.preventDefault(); });
+        keyboardHint.addEventListener('touchstart', function(e) { e.preventDefault(); }, { passive: false });
+        keyboardHint.addEventListener('mousedown', function(e) { e.preventDefault(); });
     }
 
     // 初始化第一题
