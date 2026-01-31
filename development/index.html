@@ -92,6 +92,26 @@
             color: inherit;
         }
 
+        /* 透明触发层 - 覆盖提示文字区域，防止文本被选中 */
+        #touch-trigger-layer {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 80px; /* 足够覆盖提示文字区域 */
+            z-index: 200;
+            /* 透明背景 */
+            background: transparent;
+            /* 禁止文本选择 */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: none;
+            /* 允许接收触摸事件 */
+            pointer-events: auto;
+        }
+
         .switch {
           position: relative;
           display: inline-block;
@@ -502,6 +522,8 @@
         <div class="keyboard-hint">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#f0ad4e" viewBox="0 0 16 16" style="vertical-align: middle; margin-right: 5px;"><path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a2 2 0 0 0-.453-.618A5.98 5.98 0 0 1 2 6m6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1"/></svg>长按钢琴键盘以选择琴键
         </div>
+        <!-- 透明触发层 - 覆盖提示文字区域，防止文本被选中 -->
+        <div id="touch-trigger-layer"></div>
     </div>
 </body>
 <script>
@@ -1034,11 +1056,112 @@
 
     // 禁用提示文字的文本选择，防止长按键盘时选中
     var keyboardHint = document.querySelector('.keyboard-hint');
+    var touchTriggerLayer = document.getElementById('touch-trigger-layer');
+
+    // 定位透明触发层到提示文字上方
+    function positionTriggerLayer() {
+        if (keyboardHint && touchTriggerLayer) {
+            var hintRect = keyboardHint.getBoundingClientRect();
+            var containerRect = container.getBoundingClientRect();
+            touchTriggerLayer.style.top = (hintRect.top - containerRect.top) + 'px';
+        }
+    }
+
+    // 初始定位
+    positionTriggerLayer();
+    // 窗口大小改变时重新定位
+    window.addEventListener('resize', positionTriggerLayer);
+
     if (keyboardHint) {
         // 阻止所有可能导致文本选择的事件
         keyboardHint.addEventListener('selectstart', function(e) { e.preventDefault(); });
         keyboardHint.addEventListener('touchstart', function(e) { e.preventDefault(); }, { passive: false });
         keyboardHint.addEventListener('mousedown', function(e) { e.preventDefault(); });
+    }
+
+    // 透明触发层的事件处理 - 将事件转发给大键盘
+    if (touchTriggerLayer) {
+        touchTriggerLayer.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // 创建一个新的事件对象传递给大键盘的处理函数
+            var touch = e.touches[0];
+            // 手动调用大键盘的处理函数，但使用触发层上的坐标
+            handleStart({
+                touches: [touch],
+                preventDefault: function() {},
+                stopPropagation: function() {}
+            });
+        }, { passive: false });
+
+        touchTriggerLayer.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var touch = e.touches[0];
+            handleMove({
+                touches: [touch],
+                preventDefault: function() {},
+                stopPropagation: function() {}
+            });
+        }, { passive: false });
+
+        touchTriggerLayer.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleEnd({
+                preventDefault: function() {},
+                stopPropagation: function() {}
+            });
+        });
+
+        touchTriggerLayer.addEventListener('touchcancel', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleEnd({
+                preventDefault: function() {},
+                stopPropagation: function() {}
+            });
+        });
+
+        touchTriggerLayer.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleStart({
+                clientX: e.clientX,
+                clientY: e.clientY,
+                preventDefault: function() {},
+                stopPropagation: function() {}
+            });
+        });
+
+        touchTriggerLayer.addEventListener('mousemove', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleMove({
+                clientX: e.clientX,
+                clientY: e.clientY,
+                preventDefault: function() {},
+                stopPropagation: function() {}
+            });
+        });
+
+        touchTriggerLayer.addEventListener('mouseup', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleEnd({
+                preventDefault: function() {},
+                stopPropagation: function() {}
+            });
+        });
+
+        touchTriggerLayer.addEventListener('mouseleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleEnd({
+                preventDefault: function() {},
+                stopPropagation: function() {}
+            });
+        });
     }
 
     // 初始化第一题
