@@ -10,7 +10,10 @@
             margin: 0;
             font-family: "Helvetica","Microsoft YaHei";
             font-size: 15px;
-            -webkit-user-select:none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
             cursor: default;
         }
 
@@ -64,6 +67,11 @@
             font-size: 13px;
             margin-top: 220px; /* 210px 键盘下移 + 10px 间距 */
             margin-bottom: 5px;
+            /* 禁止文本选择，防止长按键盘时选中提示文字 */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         .switch {
@@ -992,13 +1000,20 @@
     fullPiano.addEventListener('mouseup', handleEnd);
     fullPiano.addEventListener('mouseleave', handleEnd);
 
-    // 禁用大键盘图片的默认拖拽和右键菜单行为
+    // 禁用大键盘图片的默认拖拽、右键菜单和文本选择行为
     pianoImg.addEventListener('dragstart', function(e) { e.preventDefault(); });
     pianoImg.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+    pianoImg.addEventListener('selectstart', function(e) { e.preventDefault(); });
 
     // 保留原小键盘事件（以防需要恢复）
     painoDown.addEventListener("touchend", fun5);
     painoDown.addEventListener("mouseup", fun5);
+
+    // 禁用提示文字的文本选择，防止长按键盘时选中
+    var keyboardHint = document.querySelector('.keyboard-hint');
+    if (keyboardHint) {
+        keyboardHint.addEventListener('selectstart', function(e) { e.preventDefault(); });
+    }
 
     // 初始化第一题
     initNewQuestion();
